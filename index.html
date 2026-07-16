@@ -1013,7 +1013,7 @@ img{max-width:100%;height:auto;display:block}
 <script>// ══════════════════════════════════════════════════
 // DATA — loaded from API
 // ══════════════════════════════════════════════════
-const API_URL = 'https://script.google.com/macros/s/AKfycbwATb1bXAK7sVmrAoW9J8tmEZnAB_JxMo82hVjnJ9aovpS4-mgryPwQzql9jRfrT4hsBA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbz3LU-8fZN7IPafee2qWUN7xj0uSUc499umYbOjTvoK_0oayxIK5e-hP69RMWBmhlTJHA/exec';
 
 const SO_TAY_LABELS = [
   'Nội quy lớp học',
@@ -1142,10 +1142,11 @@ async function fetchAPIData(){
     const json = await resp.json();
 
     // === So_tay ===
-    // API returns: row[0]=empty, row[1]=header(TT,Tít,Link), row[2+]=data(key "3"=link)
+    // API returns: row[0]=empty, row[1]=header, row[2+]=data
+    // Key may be "" (empty string), "3", "Link", or named
     if(json.So_tay && json.So_tay.length > 2){
       allSoTayLinks = json.So_tay.slice(2).map(function(row){
-        return row['3'] || row['Link'] || '';
+        return row[''] || row['3'] || row['Link'] || '';
       }).filter(function(u){ return u && u.startsWith('http'); });
     }
 
