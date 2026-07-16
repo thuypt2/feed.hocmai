@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard - HOCMAI</title>
+  <link rel="icon" type="image/png" href="Favicon HOCMAI.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -1082,10 +1083,39 @@ function getExamKey(examStr){
   return 'all';
 }
 
+// Return array of exam keys (supports comma-separated AF column)
+function getExamKeys(examStr){
+  if(!examStr) return ['all'];
+  var s = String(examStr).toUpperCase().trim();
+  if(s === 'ALL' || s === '') return ['all','hsa','qda','tsa','vact','tnthpt'];
+  var keys = [];
+  var parts = s.split(/[,;\/]+/);
+  for(var p = 0; p < parts.length; p++){
+    var t = parts[p].trim();
+    if(t === 'TN THPT' || t === 'TNTHPT') keys.push('tnthpt');
+    else if(t === 'HSA') keys.push('hsa');
+    else if(t === 'QDA') keys.push('qda');
+    else if(t === 'TSA') keys.push('tsa');
+    else if(t === 'V-ACT' || t === 'VACT') keys.push('vact');
+    else keys.push(t.toLowerCase());
+  }
+  if(keys.length === 0) keys.push('all');
+  return keys;
+}
+
 function formatDate(d){
   const dd = String(d.getDate()).padStart(2,'0');
   const mm = String(d.getMonth()+1).padStart(2,'0');
   return `${dd}/${mm}/${d.getFullYear()}`;
+}
+
+// Convert plain text with embedded URLs to HTML with clickable links
+function formatContentHTML(text){
+  if(!text) return '';
+  var html = escapeHtml(text);
+  // Auto-link URLs: http://, https://
+  html = html.replace(/(https?:\/\/[^\s<>]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">$1</a>');
+  return html;
 }
 
 async function fetchAPIData(){
@@ -1139,7 +1169,7 @@ async function fetchAPIData(){
           time: time,
           subject: bai,
           teacher: gv,
-          exam: getExamKey(kyThi),
+          exams: getExamKeys(kyThi),
           fullDate: formatDate(date)
         });
       }
@@ -1227,8 +1257,8 @@ function renderFeed(){
       : '';
     const rawDesc = item.desc || '';
     const paragraphs = rawDesc.split('\n').filter(function(l){ return l.trim(); });
-    const shortDesc = escapeHtml(paragraphs[0] || '').substring(0, 200);
-    const hasMore = rawDesc.length > 200 || paragraphs.length > 1;
+    var shortDesc = formatContentHTML(paragraphs[0] || '').substring(0, 280);
+    var hasMore = rawDesc.length > 300 || paragraphs.length > 1;
     return '\n      <div class="feed-card" onclick="openFeedDetail(\'' + item.id + '\')">' +
       '\n        <div class="feed-icon ' + item.iconType + '">' + item.icon + '</div>' +
       '\n        <div class="feed-body">' +
@@ -1278,7 +1308,9 @@ function renderSchedule(exam){
   const source = allScheduleData.length > 0 ? allScheduleData : [];
   const filtered = examType === 'all'
     ? source
-    : source.filter(s => s.exam === examType);
+    : source.filter(function(s){
+        return s.exams.indexOf(examType) >= 0;
+      });
   const list = document.getElementById('scheduleList');
   const seeMore = document.getElementById('scheduleSeeMore');
 
@@ -1365,13 +1397,12 @@ function openFeedDetail(id){
       onmouseover="this.style.background='var(--primary-light)';this.style.borderColor='var(--primary)'"
       onmouseout="this.style.background='var(--bg)';this.style.borderColor='var(--line)'">🔗 Sao chép link</button>
   `;
-  // Format content: paragraphs separated by newlines → <p>
-  const formatted = escapeHtml(item.desc || '')
-    .split('\n')
+  // Format content: paragraphs + auto-linked URLs
+  var descHtml = (item.desc || '').split('\n')
     .filter(function(l){ return l.trim(); })
-    .map(function(l){ return '<p style="margin:0 0 10px">' + l + '</p>'; })
+    .map(function(l){ return '<p style="margin:0 0 10px;line-height:1.7">' + formatContentHTML(l) + '</p>'; })
     .join('');
-  document.getElementById('modalContent').innerHTML = formatted;
+  document.getElementById('modalContent').innerHTML = descHtml;
   document.getElementById('detailModal').classList.add('show');
 }
 
