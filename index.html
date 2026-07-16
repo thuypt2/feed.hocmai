@@ -1116,12 +1116,18 @@ function formatDate(d){
 }
 
 // Convert plain text with embedded URLs to HTML with clickable links
+// Also detects image URLs and renders them as <img>
 function formatContentHTML(text){
   if(!text) return '';
+  // Auto-render image URLs as <img> (strip wrapping tags if present)
+  var imgExt = /(https?:\/\/[^\s<>]+\.(?:jpg|jpeg|png|gif|webp|svg|bmp)(?:\?[^\s<>]*)?)/gi;
+  text = String(text).replace(imgExt, function(url) {
+    return '<img src="' + url + '" loading="lazy" style="max-width:100%;border-radius:var(--radius-sm);margin:8px 0;display:block">';
+  });
   // If already contains HTML tags (from rich text), just auto-link remaining plain URLs
   if(/<[a-z][\s\S]*>/i.test(text)){
-    // Already has HTML — only link bare URLs not inside tags
-    return text.replace(/(?<!href="|">)(https?:\/\/[^\s<>]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">$1</a>');
+    // Already has HTML — only link bare URLs not inside tags or img src
+    return text.replace(/(?<!href="|src="|">)(https?:\/\/[^\s<>]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">$1</a>');
   }
   var html = escapeHtml(text);
   html = html.replace(/(https?:\/\/[^\s<>]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">$1</a>');
@@ -1235,7 +1241,7 @@ async function fetchAPIData(){
         const ngayDang  = row['Ngày_đăng']  || row['Ngày đăng']  || row['1'] || '';
         const tieuDe    = row['Tiêu_đề']    || row['Tiêu đề']    || row['3'] || '';
         const noiDung   = row['Nội_dung']   || row['Nội dung']   || row['4'] || '';
-        const isHot     = (row['Thumnail'] || row['5'] || '') === 'Tin hot';
+        const isHot     = (row['Thumnail'] || row['Section'] || row['5'] || '') === 'Tin hot';
         const kyThi     = row['Ky_thi']     || row['Kỳ thi']     || row['9'] || '';
         const giaiDoan  = row['Giai_doan']  || row['Giai đoạn']  || row['10'] || '';
         const mucDo     = row['Muc_do']     || row['Mức độ']     || row['12'] || '';
@@ -1300,8 +1306,9 @@ function renderFeed(){
       ? '<span class="feed-badge ' + item.badgeType + '">' + escapeHtml(item.badge) + '</span>'
       : '';
     const rawDesc = item.desc || '';
-    // Strip HTML for card preview
+    // Strip HTML + remove image URLs for card preview
     var plainDesc = stripHtml(rawDesc);
+    plainDesc = plainDesc.replace(/(https?:\/\/\S+\.(?:jpg|jpeg|png|gif|webp|svg|bmp)(?:\?\S*)?)/gi, '[Hình ảnh]');
     var shortDesc = escapeHtml(plainDesc).substring(0, 200);
     var hasMore = plainDesc.length > 200 || (rawDesc !== plainDesc);
     return '\n      <div class="feed-card" onclick="openFeedDetail(\'' + item.id + '\')">' +
