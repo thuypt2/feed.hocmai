@@ -1136,24 +1136,30 @@ function stripHtml(html){
   return div.textContent || div.innerText || '';
 }
 
+// Auto-detect data start offset: old API has empty-key header row at [0] + real header at [1]
+// new API has proper named-key header at [0], data starts at [1]
+function getDataStart(arr) {
+  if (!arr || arr.length < 2) return 1;
+  // Old format: row[1] has empty string key ""
+  if (arr[1] && arr[1].hasOwnProperty('')) return 2;
+  return 1;
+}
+
 async function fetchAPIData(){
   try {
     const resp = await fetch(API_URL);
     const json = await resp.json();
 
     // === So_tay ===
-    // API returns: row[0]=empty, row[1]=header, row[2+]=data
-    // Key may be "" (empty string), "3", "Link", or named
-    if(json.So_tay && json.So_tay.length > 2){
-      allSoTayLinks = json.So_tay.slice(2).map(function(row){
-        return row[''] || row['3'] || row['Link'] || '';
+    if(json.So_tay && json.So_tay.length > 1){
+      const start = getDataStart(json.So_tay);
+      allSoTayLinks = json.So_tay.slice(start).map(function(row){
+        return row['Link'] || row['3'] || row[''] || '';
       }).filter(function(u){ return u && u.startsWith('http'); });
     }
 
     // === Lich_hoc ===
-    // API returns: row[0]=header names, row[1]=header numbers, row[2+]=data with numeric keys
-    // Key: 1=Môn, 3=Tên bài giảng, 4=Tên GV, 5=Ngày live (ISO), 7=Khung giờ, 32=Kỳ thi/Lớp
-    if(json.Lich_hoc && json.Lich_hoc.length > 2){
+    if(json.Lich_hoc && json.Lich_hoc.length > 1){
       const today = new Date();
       today.setHours(0,0,0,0);
       const cutoff = new Date(today);
@@ -1162,8 +1168,9 @@ async function fetchAPIData(){
 
       const seen = new Set();
       allScheduleData = [];
+      const start = getDataStart(json.Lich_hoc);
 
-      for(let i = 2; i < json.Lich_hoc.length; i++){
+      for(let i = start; i < json.Lich_hoc.length; i++){
         const row = json.Lich_hoc[i];
         const bai   = row['Tên bài giảng'] || row['Tên_bài_giảng'] || row['3'] || '';
         const gv    = row['Tên GV']  || row['Tên_GV']  || row['4'] || '';
@@ -1199,12 +1206,11 @@ async function fetchAPIData(){
     }
 
     // === Ban_tin ===
-    // API returns: row[0]=empty, row[1]=header (Ngày_đăng,Người_đăng,Tiêu_đề,Nội_dung,
-    //   Ky_thi,Giai_doan,Muc_do), row[2+]=data.
-    // We also support old keys with spaces (Ngày đăng, Tiêu đề, etc.)
-    if(json.Ban_tin && json.Ban_tin.length > 2){
+    if(json.Ban_tin && json.Ban_tin.length > 1){
       allFeedData = [];
-      for(let i = 2; i < json.Ban_tin.length; i++){
+      const start = getDataStart(json.Ban_tin);
+
+      for(let i = start; i < json.Ban_tin.length; i++){
         const row = json.Ban_tin[i];
         // Support both underscore and space key formats
         const ngayDang  = row['Ngày_đăng']  || row['Ngày đăng']  || row['1'] || '';

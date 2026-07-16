@@ -42,27 +42,43 @@ function readBanTin() {
 
   var lastRow = sheet.getLastRow();
   var lastCol = sheet.getLastColumn();
-  if (lastRow < 1 || lastCol < 1) return [];
+  if (lastRow < 2 || lastCol < 1) return [];
 
   // Đọc toàn bộ plain values
   var values = sheet.getRange(1, 1, lastRow, lastCol).getValues();
-  // Đọc rich text cho cột C (3) và D (4)
-  var richColC = sheet.getRange(1, 3, lastRow, 1).getRichTextValues();
-  var richColD = sheet.getRange(1, 4, lastRow, 1).getRichTextValues();
 
-  var headers = values[0];
+  // Tìm dòng header thực sự (skip các dòng trống ở đầu)
+  var headerRowIdx = 0;
+  while (headerRowIdx < values.length) {
+    var row = values[headerRowIdx];
+    var nonEmpty = false;
+    for (var c = 0; c < row.length; c++) {
+      if (row[c] !== '' && row[c] !== null) { nonEmpty = true; break; }
+    }
+    if (nonEmpty) break;
+    headerRowIdx++;
+  }
+  if (headerRowIdx >= values.length) return []; // All empty
+
+  var headers = values[headerRowIdx];
+
+  // Đọc rich text cho cột C (3) và D (4), offset theo headerRowIdx
+  var richColC = sheet.getRange(headerRowIdx + 1, 3, lastRow - headerRowIdx, 1).getRichTextValues();
+  var richColD = sheet.getRange(headerRowIdx + 1, 4, lastRow - headerRowIdx, 1).getRichTextValues();
+
   var result = [];
 
   // Dòng header (để dashboard skip)
   var headerObj = {};
   for (var c = 0; c < headers.length; c++) {
     var key = String(headers[c]).trim();
+    if (!key) key = String(c + 1); // fallback key nếu header rỗng
     headerObj[key] = key;
   }
   result.push(headerObj);
 
-  // Dữ liệu
-  for (var i = 1; i < lastRow; i++) {
+  // Dữ liệu (bắt đầu từ dòng sau header)
+  for (var i = headerRowIdx + 1; i < lastRow; i++) {
     var row = values[i];
     var isEmpty = true;
     for (var c = 0; c < row.length; c++) {
@@ -74,14 +90,18 @@ function readBanTin() {
     if (isEmpty) continue;
 
     var obj = {};
+    var richRowIdx = i - headerRowIdx - 1; // 0-based index trong richTextValues (chỉ data rows)
     for (var c = 0; c < headers.length; c++) {
       var key = String(headers[c]).trim();
+      if (!key) key = String(c + 1);
       if (c === 2) {
         // Cột C (0-based index 2) = Tiêu đề → rich text
-        obj[key] = richTextToHtml(richColC[i][0]);
+        var rtC = (richRowIdx >= 0 && richRowIdx < richColC.length) ? richColC[richRowIdx][0] : null;
+        obj[key] = richTextToHtml(rtC);
       } else if (c === 3) {
         // Cột D (0-based index 3) = Nội dung → rich text
-        obj[key] = richTextToHtml(richColD[i][0]);
+        var rtD = (richRowIdx >= 0 && richRowIdx < richColD.length) ? richColD[richRowIdx][0] : null;
+        obj[key] = richTextToHtml(rtD);
       } else {
         obj[key] = row[c];
       }
@@ -151,20 +171,35 @@ function readSheetPlain(sheetName) {
 
   var lastRow = sheet.getLastRow();
   var lastCol = sheet.getLastColumn();
-  if (lastRow < 1 || lastCol < 1) return [];
+  if (lastRow < 2 || lastCol < 1) return [];
 
   var raw = sheet.getRange(1, 1, lastRow, lastCol).getValues();
-  var headers = raw[0];
+
+  // Tìm dòng header thực sự (skip các dòng trống ở đầu)
+  var headerRowIdx = 0;
+  while (headerRowIdx < raw.length) {
+    var checkRow = raw[headerRowIdx];
+    var nonEmpty = false;
+    for (var c = 0; c < checkRow.length; c++) {
+      if (checkRow[c] !== '' && checkRow[c] !== null) { nonEmpty = true; break; }
+    }
+    if (nonEmpty) break;
+    headerRowIdx++;
+  }
+  if (headerRowIdx >= raw.length) return [];
+
+  var headers = raw[headerRowIdx];
   var result = [];
 
   var headerObj = {};
   for (var c = 0; c < headers.length; c++) {
     var key = String(headers[c]).trim();
+    if (!key) key = String(c + 1); // fallback key nếu header rỗng
     headerObj[key] = key;
   }
   result.push(headerObj);
 
-  for (var i = 1; i < raw.length; i++) {
+  for (var i = headerRowIdx + 1; i < raw.length; i++) {
     var row = raw[i];
     var isEmpty = true;
     for (var c = 0; c < row.length; c++) {
@@ -178,6 +213,7 @@ function readSheetPlain(sheetName) {
     var obj = {};
     for (var c = 0; c < headers.length; c++) {
       var key = String(headers[c]).trim();
+      if (!key) key = String(c + 1);
       obj[key] = row[c];
     }
     result.push(obj);
