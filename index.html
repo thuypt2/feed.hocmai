@@ -442,6 +442,20 @@ img{max-width:100%;height:auto;display:block}
   transition:all var(--transition);
 }
 .feed-card:hover .feed-arrow{color:var(--primary);transform:translateX(4px)}
+.feed-link-copy{
+  color:var(--text-muted);
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  flex-shrink:0;
+  padding:4px;
+  border-radius:4px;
+  cursor:pointer;
+  transition:all var(--transition);
+  opacity:0;
+}
+.feed-card:hover .feed-link-copy{opacity:1}
+.feed-link-copy:hover{background:var(--primary-light);color:var(--primary)}
 
 /* ═══════════════════════════ RIGHT COL ═══════════════════════════ */
 .right-col{
@@ -1035,6 +1049,7 @@ let allFeedData = [];
 let allSoTayLinks = [];
 let currentExamFilter = 'all';
 let scheduleExpanded = false;
+let feedDataReady = false;
 const SCHEDULE_MAX_PREVIEW = 3;
 
 // ══════════════════════════════════════════════════
@@ -1225,6 +1240,7 @@ function renderFeed(){
       '\n            <span class="feed-category">' + escapeHtml(item.category) + '</span>' +
       '\n          </div>' +
       '\n        </div>' +
+      '\n        <span class="feed-link-copy" title="Copy link" onclick="event.stopPropagation();copyFeedLink(\'' + item.id + '\')">🔗</span>' +
       '\n        <span class="feed-arrow">›</span>' +
       '\n      </div>';
   }
@@ -1333,6 +1349,10 @@ function filterExam(exam){
 function openFeedDetail(id){
   const item = allFeedData.find(x => x.id === id);
   if(!item) return;
+
+  // Set URL hash for sharing
+  window.location.hash = id;
+
   document.getElementById('modalTitle').textContent = item.title;
   const badgeHtmlModal = item.badge
     ? `<span class="feed-badge ${item.badgeType}" style="font-size:11px">${escapeHtml(item.badge)}</span>`
@@ -1341,6 +1361,9 @@ function openFeedDetail(id){
     <span>🕐 ${escapeHtml(item.time)}</span>
     <span>📁 ${escapeHtml(item.category)}</span>
     ${badgeHtmlModal}
+    <button onclick="copyFeedLink('${item.id}')" style="margin-left:auto;padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all var(--transition)"
+      onmouseover="this.style.background='var(--primary-light)';this.style.borderColor='var(--primary)'"
+      onmouseout="this.style.background='var(--bg)';this.style.borderColor='var(--line)'">🔗 Sao chép link</button>
   `;
   // Format content: paragraphs separated by newlines → <p>
   const formatted = escapeHtml(item.desc || '')
@@ -1352,6 +1375,39 @@ function openFeedDetail(id){
   document.getElementById('detailModal').classList.add('show');
 }
 
+function copyFeedLink(id){
+  // Build full URL with hash
+  var url = window.location.origin + window.location.pathname + '#' + id;
+  navigator.clipboard.writeText(url).then(function(){
+    // Flash the clicked element briefly
+    showToast('Da sao chep link! ' + url.substring(url.lastIndexOf('#')), 2000);
+  }).catch(function(){
+    // Fallback for older browsers
+    showToast('Link: ' + url, 4000);
+  });
+}
+
+function showToast(msg, ms){
+  var toast = document.getElementById('toastMsg');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'toastMsg';
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(function(){ toast.style.opacity = '0'; }, ms);
+}
+
+function closeModal(){
+  document.getElementById('detailModal').classList.remove('show');
+  // Clear hash when closing
+  if(window.location.hash) {
+    history.pushState(null, '', window.location.pathname);
+  }
+}
 function openScheduleDetail(subject, teacher, date, month, time){
   document.getElementById('modalTitle').textContent = 'Chi tiết buổi học';
   document.getElementById('modalMeta').innerHTML = `
@@ -1363,10 +1419,6 @@ function openScheduleDetail(subject, teacher, date, month, time){
     <p style="font-size:14px;color:var(--text-secondary)">👨‍🏫 ${escapeHtml(teacher)}</p>
   `;
   document.getElementById('detailModal').classList.add('show');
-}
-
-function closeModal(){
-  document.getElementById('detailModal').classList.remove('show');
 }
 
 // ══════════════════════════════════════════════════
@@ -1398,11 +1450,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Fetch real data
   await fetchAPIData();
+  feedDataReady = true;
 
   // Re-render with real data
   renderFeed();
   renderSoTay();
   renderSchedule(currentExamFilter);
+
+  // Auto-open from URL hash (share link)
+  var hash = window.location.hash.replace('#', '');
+  if(hash && allFeedData.length > 0){
+    setTimeout(function(){ openFeedDetail(hash); }, 100);
+  }
 });
 </script>
 
