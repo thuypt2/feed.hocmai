@@ -873,20 +873,23 @@ img{max-width:100%;height:auto;display:block}
     <div class="content-grid">
 
       <section class="banner-section">
-        <div class="banner-slide" style="background:linear-gradient(135deg,#001a4d 0%,var(--primary) 50%,#0088cc 100%);color:#fff;padding:40px 48px;border-radius:var(--radius);display:flex;align-items:center;justify-content:space-between">
-          <div>
-            <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,.15);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">🔥 TRANG THÔNG TIN HỖ TRỢ HỌC TẬP</span>
-            <h2 style="font-size:28px;font-weight:800;line-height:1.3;margin-bottom:10px;">Cập nhật tin tức mới nhất về thông báo, sự kiện, học tập dành cho học viên</h2>
-            <button style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-weight:600;font-size:14px;border:none;cursor:pointer;transition:all var(--transition)" onmouseover="this.style.background='#e67800';this.style.transform='translateY(-1px)'">Khám phá ngay →</button>
-          </div>
-          <div style="flex-shrink:0;width:200px;height:160px;background:rgba(255,255,255,.08);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:64px;margin-left:24px;">📚</div>
-        </div>
+        <img src="banner hoc tap.png" alt="Banner HOCMAI" style="width:100%;border-radius:var(--radius);display:block">
       </section>
 
-      <!-- ═══════ LEFT COL — FEED THÔNG BÁO ═══════ -->
+      <!-- ═══════ LEFT COL — FEED ═══════ -->
+      <!-- Tin hot -->
+      <section class="feed-section" style="margin-bottom:20px">
+        <div class="feed-header">
+          <h2>🔥 TIN NÓNG</h2>
+        </div>
+        <div class="feed-list" id="feedHotList">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+      <!-- Tin mới -->
       <section class="feed-section">
         <div class="feed-header">
-          <h2>🔔 Thông báo mới</h2>
+          <h2>📰 TIN MỚI</h2>
           <span class="view-all" onclick="viewAllNotif()">Xem tất cả →</span>
         </div>
         <div class="feed-list" id="feedList">
@@ -1141,6 +1144,7 @@ async function fetchAPIData(){
         const ngayDang  = row['Ngày_đăng']  || row['Ngày đăng']  || row['1'] || '';
         const tieuDe    = row['Tiêu_đề']    || row['Tiêu đề']    || row['3'] || '';
         const noiDung   = row['Nội_dung']   || row['Nội dung']   || row['4'] || '';
+        const isHot     = (row['Thumnail'] || row['5'] || '') === 'Tin hot';
         const kyThi     = row['Ky_thi']     || row['Kỳ thi']     || row['9'] || '';
         const giaiDoan  = row['Giai_doan']  || row['Giai đoạn']  || row['10'] || '';
         const mucDo     = row['Muc_do']     || row['Mức độ']     || row['12'] || '';
@@ -1174,7 +1178,8 @@ async function fetchAPIData(){
           time: timeStr,
           badge: mucDoNorm || '',
           badgeType: FEED_BADGE_STYLE[mucDoNorm] || 'new',
-          category: (kyThi ? kyThi + ' · ' : '') + (giaiDoan || mucDoNorm || 'Thông báo')
+          category: (kyThi ? kyThi + ' · ' : '') + (giaiDoan || mucDoNorm || 'Thông báo'),
+          isHot: isHot
         });
       }
     }
@@ -1187,35 +1192,52 @@ async function fetchAPIData(){
 // RENDER
 // ══════════════════════════════════════════════════
 function renderFeed(){
-  const list = document.getElementById('feedList');
+  const hotList = document.getElementById('feedHotList');
+  const newList = document.getElementById('feedList');
+
   if(allFeedData.length === 0){
-    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:14px">Đang tải dữ liệu...</div>';
+    hotList.innerHTML = '';
+    newList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:14px">Dang tai du lieu...</div>';
     return;
   }
-  list.innerHTML = allFeedData.map(item => {
+
+  const hotData = allFeedData.filter(function(item){ return item.isHot; });
+  const newData = allFeedData.filter(function(item){ return !item.isHot; });
+
+  function buildCard(item){
     const badgeHtml = item.badge
-      ? `<span class="feed-badge ${item.badgeType}">${escapeHtml(item.badge)}</span>`
+      ? '<span class="feed-badge ' + item.badgeType + '">' + escapeHtml(item.badge) + '</span>'
       : '';
-    // Format desc: trim to first meaningful paragraph, ~200 chars
     const rawDesc = item.desc || '';
     const paragraphs = rawDesc.split('\n').filter(function(l){ return l.trim(); });
     const shortDesc = escapeHtml(paragraphs[0] || '').substring(0, 200);
     const hasMore = rawDesc.length > 200 || paragraphs.length > 1;
-    return `
-      <div class="feed-card" onclick="openFeedDetail('${item.id}')">
-        <div class="feed-icon ${item.iconType}">${item.icon}</div>
-        <div class="feed-body">
-          <div class="feed-title">${escapeHtml(item.title)}</div>
-          <div class="feed-desc">${shortDesc}${hasMore ? '…' : ''}</div>
-          <div class="feed-meta">
-            <span class="feed-time">🕐 ${item.time}</span>
-            ${badgeHtml}
-            <span class="feed-category">${escapeHtml(item.category)}</span>
-          </div>
-        </div>
-        <span class="feed-arrow">›</span>
-      </div>`;
-  }).join('');
+    return '\n      <div class="feed-card" onclick="openFeedDetail(\'' + item.id + '\')">' +
+      '\n        <div class="feed-icon ' + item.iconType + '">' + item.icon + '</div>' +
+      '\n        <div class="feed-body">' +
+      '\n          <div class="feed-title">' + escapeHtml(item.title) + '</div>' +
+      '\n          <div class="feed-desc">' + shortDesc + (hasMore ? '...' : '') + '</div>' +
+      '\n          <div class="feed-meta">' +
+      '\n            <span class="feed-time">🕐 ' + escapeHtml(item.time) + '</span>' +
+      '\n            ' + badgeHtml +
+      '\n            <span class="feed-category">' + escapeHtml(item.category) + '</span>' +
+      '\n          </div>' +
+      '\n        </div>' +
+      '\n        <span class="feed-arrow">›</span>' +
+      '\n      </div>';
+  }
+
+  // Tin nong
+  if(hotData.length === 0){
+    hotList.innerHTML = '<div style="padding:12px 20px;text-align:center;color:var(--text-muted);font-size:13px">Khong co tin nong</div>';
+  } else {
+    hotList.innerHTML = hotData.map(buildCard).join('');
+  }
+
+  // Tin moi
+  newList.innerHTML = newData.length === 0
+    ? '<div style="padding:12px 20px;text-align:center;color:var(--text-muted);font-size:13px">Khong co tin moi</div>'
+    : newData.map(buildCard).join('');
 }
 
 function renderSoTay(){
