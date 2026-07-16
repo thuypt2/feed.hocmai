@@ -824,6 +824,13 @@ img{max-width:100%;height:auto;display:block}
   color:var(--text-secondary);
 }
 
+.feed-content b, .feed-content strong{font-weight:700}
+.feed-content i, .feed-content em{font-style:italic}
+.feed-content u{text-decoration:underline}
+.feed-content s{text-decoration:line-through}
+.feed-content a{color:var(--primary);text-decoration:underline;word-break:break-all}
+.feed-content a:hover{color:var(--primary-dark)}
+
 /* ═══════════════════════════ RESPONSIVE ═══════════════════════════ */
 @media(max-width:1200px){
   .content{padding:20px 24px 100px}
@@ -1112,10 +1119,22 @@ function formatDate(d){
 // Convert plain text with embedded URLs to HTML with clickable links
 function formatContentHTML(text){
   if(!text) return '';
+  // If already contains HTML tags (from rich text), just auto-link remaining plain URLs
+  if(/<[a-z][\s\S]*>/i.test(text)){
+    // Already has HTML — only link bare URLs not inside tags
+    return text.replace(/(?<!href="|">)(https?:\/\/[^\s<>]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">$1</a>');
+  }
   var html = escapeHtml(text);
-  // Auto-link URLs: http://, https://
   html = html.replace(/(https?:\/\/[^\s<>]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">$1</a>');
   return html;
+}
+
+// Strip HTML tags → plain text (for card preview & title)
+function stripHtml(html){
+  if(!html) return '';
+  var div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent || div.innerText || '';
 }
 
 async function fetchAPIData(){
@@ -1256,9 +1275,10 @@ function renderFeed(){
       ? '<span class="feed-badge ' + item.badgeType + '">' + escapeHtml(item.badge) + '</span>'
       : '';
     const rawDesc = item.desc || '';
-    const paragraphs = rawDesc.split('\n').filter(function(l){ return l.trim(); });
-    var shortDesc = formatContentHTML(paragraphs[0] || '').substring(0, 280);
-    var hasMore = rawDesc.length > 300 || paragraphs.length > 1;
+    // Strip HTML for card preview
+    var plainDesc = stripHtml(rawDesc);
+    var shortDesc = escapeHtml(plainDesc).substring(0, 200);
+    var hasMore = plainDesc.length > 200 || (rawDesc !== plainDesc);
     return '\n      <div class="feed-card" onclick="openFeedDetail(\'' + item.id + '\')">' +
       '\n        <div class="feed-icon ' + item.iconType + '">' + item.icon + '</div>' +
       '\n        <div class="feed-body">' +
@@ -1385,7 +1405,9 @@ function openFeedDetail(id){
   // Set URL hash for sharing
   window.location.hash = id;
 
-  document.getElementById('modalTitle').textContent = item.title;
+  // Title may contain HTML from rich text — strip for modal header
+  document.getElementById('modalTitle').textContent = stripHtml(item.title || 'Thông báo');
+
   const badgeHtmlModal = item.badge
     ? `<span class="feed-badge ${item.badgeType}" style="font-size:11px">${escapeHtml(item.badge)}</span>`
     : '';
@@ -1397,12 +1419,23 @@ function openFeedDetail(id){
       onmouseover="this.style.background='var(--primary-light)';this.style.borderColor='var(--primary)'"
       onmouseout="this.style.background='var(--bg)';this.style.borderColor='var(--line)'">🔗 Sao chép link</button>
   `;
-  // Format content: paragraphs + auto-linked URLs
-  var descHtml = (item.desc || '').split('\n')
-    .filter(function(l){ return l.trim(); })
-    .map(function(l){ return '<p style="margin:0 0 10px;line-height:1.7">' + formatContentHTML(l) + '</p>'; })
-    .join('');
-  document.getElementById('modalContent').innerHTML = descHtml;
+  // Render content HTML with line breaks + auto-link URLs
+  var desc = item.desc || '';
+  // Split by newlines, skip empty, apply formatContentHTML to each line
+  var lines = desc.split('\n').filter(function(l){ return l.trim(); });
+  if(desc.indexOf('<') >= 0 && desc.indexOf('>') >= 0){
+    // Already has HTML from rich text — render as-is with URL linking
+    var html = formatContentHTML(desc);
+    // Replace newlines with <br>
+    html = html.replace(/\n/g, '<br>');
+    document.getElementById('modalContent').innerHTML = '<div class="feed-content" style="font-size:14px;line-height:1.8;color:var(--text)">' + html + '</div>';
+  } else {
+    // Plain text — wrap each paragraph
+    var html = lines.map(function(l){
+      return '<p style="margin:0 0 10px;line-height:1.8">' + formatContentHTML(l) + '</p>';
+    }).join('');
+    document.getElementById('modalContent').innerHTML = html;
+  }
   document.getElementById('detailModal').classList.add('show');
 }
 
