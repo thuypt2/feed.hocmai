@@ -917,20 +917,20 @@ img{max-width:100%;height:auto;display:block}
       <!-- ═══════ RIGHT COL ═══════ -->
       <div class="right-col">
 
-        <!-- Sổ tay cho thành viên mới -->
+        <!-- SỔ TAY HỌC VIÊN -->
         <div class="quick-section">
           <div class="section-header">
-            <h3>📖 Sổ tay cho thành viên mới</h3>
+            <h3>📖 SỔ TAY HỌC VIÊN</h3>
           </div>
           <div class="links-list" id="soTayList">
             <a href="#" class="link-item"><span class="li-icon">📋</span> Đang tải...</a>
           </div>
         </div>
 
-        <!-- Lịch học sắp tới -->
+        <!-- LỊCH HỌC SẮP DIỄN RA -->
         <div class="quick-section">
           <div class="section-header">
-            <h3>📅 Lịch học sắp tới</h3>
+            <h3>📅 LỊCH HỌC SẮP DIỄN RA</h3>
           </div>
           <div style="padding:0 16px 8px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line-light)" id="examFilters">
             <button class="exam-filter active" data-exam="all" onclick="filterExam('all')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--primary);color:#fff;font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">Tất cả</button>
@@ -1440,7 +1440,7 @@ function closeModal(){
   }
 }
 function openScheduleDetail(subject, teacher, date, month, time){
-  document.getElementById('modalTitle').textContent = 'Chi tiết buổi học';
+  document.getElementById('modalTitle').textContent = 'Thông tin buổi học';
   document.getElementById('modalMeta').innerHTML = `
     <span>📅 ${date}/${month}</span>
     <span>⏰ ${time}</span>
@@ -1448,6 +1448,12 @@ function openScheduleDetail(subject, teacher, date, month, time){
   document.getElementById('modalContent').innerHTML = `
     <p style="font-size:15px;font-weight:600;margin-bottom:8px">${escapeHtml(subject)}</p>
     <p style="font-size:14px;color:var(--text-secondary)">👨‍🏫 ${escapeHtml(teacher)}</p>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line-light)">
+      <a href="https://hocmai.vn/study/calendar" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:8px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;text-decoration:none;transition:all var(--transition)"
+         onmouseover="this.style.background='#004a8f';this.style.transform='translateY(-1px)'"
+         onmouseout="this.style.background='var(--primary)';this.style.transform='none'">📅 Vào lịch học</a>
+    </div>
   `;
   document.getElementById('detailModal').classList.add('show');
 }
