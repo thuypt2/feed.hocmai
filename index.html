@@ -3,1563 +3,1358 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TRANG THÔNG TIN HỌC TẬP - HOCMAI</title>
+<title>Dashboard - HOCMAI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════ RESET & BASE ═══════════════════ */
+/* ═══════════════════════════ RESET & VARIABLES ═══════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --blue:#135cc5;
-  --blue-dark:#0b4fae;
-  --blue-light:#e8f0fe;
-  --blue-soft:#f0f5ff;
-  --orange:#f57c00;
-  --orange-bright:#ff6b00;
-  --navy:#1a1a2e;
-  --nav-bg:#1e2a45;
-  --text:#171717;
-  --text-light:#5f6368;
+  --primary:#005BAC;
+  --primary-dark:#004a8f;
+  --primary-light:#e8f2fd;
+  --primary-50:#f0f7ff;
+  --accent:#FF8A00;
+  --accent-light:#fff3e0;
+  --text:#1a1a2e;
+  --text-secondary:#5f6368;
   --text-muted:#8e9198;
-  --line:#d8dde5;
-  --line-light:#eef1f5;
   --bg:#f5f7fa;
   --white:#fff;
-  --radius:12px;
-  --radius-sm:6px;
-  --radius-lg:16px;
+  --line:#e2e6ee;
+  --line-light:#f0f2f5;
+  --green:#2e7d32;
+  --green-light:#e8f5e9;
+  --red:#e53935;
+  --red-light:#fce4ec;
+  --purple:#6a1b9a;
+  --purple-light:#f3e5f5;
+  --teal:#00897b;
+  --teal-light:#e0f2f1;
+  --orange:#f57c00;
+  --orange-light:#fff3e0;
+  --radius:16px;
+  --radius-sm:10px;
+  --radius-xs:6px;
   --shadow-sm:0 1px 3px rgba(0,0,0,.06);
-  --shadow-md:0 4px 14px rgba(19,92,197,.08);
+  --shadow-md:0 4px 16px rgba(0,91,172,.08);
   --shadow-lg:0 8px 30px rgba(0,0,0,.1);
-  --tag-red:#e53935;
-  --tag-orange:#f57c00;
-  --tag-green:#2e7d32;
-  --tag-blue:#1565c0;
-  --tag-purple:#6a1b9a;
-  --tag-teal:#00897b;
-  --transition:.2s ease;
+  --shadow-card:0 2px 8px rgba(0,0,0,.04);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --font:'Be Vietnam Pro',-apple-system,BlinkMacSystemFont,sans-serif;
+  --header-h:64px;
 }
 html{scroll-behavior:smooth}
 body{
-  margin:0;
+  font-family:var(--font);
+  font-size:15px;
+  line-height:1.6;
   color:var(--text);
   background:var(--bg);
-  font:15px/1.6 'Noto Sans','Inter',Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;
   min-height:100vh;
-  display:flex;
-  flex-direction:column;
+  -webkit-font-smoothing:antialiased;
 }
-a{color:var(--blue);text-decoration:none;transition:color var(--transition)}
-a:hover{color:var(--blue-dark);text-decoration:underline}
-img{max-width:100%;height:auto}
+a{color:var(--primary);text-decoration:none;transition:color var(--transition)}
+a:hover{color:var(--primary-dark)}
+img{max-width:100%;height:auto;display:block}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
 
-/* ═══════════════════ HEADER — HOCMAI style ═══════════════════ */
-.top-bar{
+/* ═══════════════════════════ HEADER ═══════════════════════════ */
+.header{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:var(--header-h);
   background:var(--white);
-  height:50px;
-  border-bottom:1px solid var(--line);
+  border-bottom:1px solid var(--line-light);
+  z-index:1000;
   display:flex;
   align-items:center;
-  position:sticky;
-  top:0;
-  z-index:200;
+  padding:0 24px 0 20px;
 }
-.top-bar-inner{
-  width:calc(100% - 30px);
-  max-width:1200px;
-  margin:auto;
+.header-inner{
   display:flex;
   align-items:center;
   justify-content:space-between;
+  width:100%;
+  max-width:1440px;
+  margin:0 auto;
 }
-.logo-link{
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.logo{
   display:flex;
   align-items:center;
   gap:8px;
   text-decoration:none;
 }
-.logo-link:hover{text-decoration:none}
-.logo-img{
-  display:block;
-  height:28px;
-  width:auto;
-  object-fit:contain;
-}
-.logo-text{
-  font-size:16px;
-  font-weight:800;
-  color:var(--text);
-  letter-spacing:-.3px;
-}
-.logo-text span{color:var(--blue)}
-.top-bar-right{
+.header-left{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:16px;
 }
-.top-bar-right .hotline{
-  font-size:13px;
-  font-weight:600;
-  color:var(--text-light);
+.logo{
   display:flex;
   align-items:center;
-  gap:4px;
-}
-.top-bar-right .hotline i{font-style:normal;color:var(--orange-bright)}
-.btn-login{
-  padding:6px 16px;
-  border:1px solid var(--line);
-  border-radius:6px;
-  background:var(--white);
-  color:var(--text);
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all var(--transition);
+  gap:8px;
   text-decoration:none;
 }
-.btn-login:hover{
-  border-color:var(--blue);
-  color:var(--blue);
-  text-decoration:none;
-}
-.btn-register{
-  padding:6px 16px;
-  border:none;
-  border-radius:6px;
-  background:var(--orange-bright);
-  color:#fff;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all var(--transition);
-  text-decoration:none;
-}
-.btn-register:hover{
-  background:#e06000;
-  text-decoration:none;
-}
-
-/* Navigation bar */
-.nav-bar{
-  background:var(--nav-bg);
-  height:44px;
+.logo-icon{
+  width:36px;height:36px;
   display:flex;
   align-items:center;
-}
-.nav-bar-inner{
-  width:calc(100% - 30px);
-  max-width:1200px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  gap:24px;
-}
-.nav-bar a{
-  color:#c8cdd8;
-  font-size:13px;
-  font-weight:500;
-  text-decoration:none;
-  transition:color var(--transition);
-  white-space:nowrap;
-}
-.nav-bar a:hover,.nav-bar a.active{color:#fff}
-.nav-bar a.active{position:relative}
-.nav-bar a.active::after{
-  content:'';
-  position:absolute;
-  bottom:-2px;
-  left:0;
-  right:0;
-  height:2px;
-  background:var(--orange-bright);
-  border-radius:1px;
-}
-.nav-bar .nav-spacer{flex:1}
-.nav-bar .nav-extra{
-  color:#8892a4;
-  font-size:12px;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-
-/* ═══════════════════ PAGE HERO — WITHOUT ICON ═══════════════════ */
-.page-hero{
-  background:linear-gradient(135deg,#1a2a6c 0%,#1e3a7a 40%,#135cc5 100%);
-  color:#fff;
-  padding:40px 20px 32px;
-  text-align:center;
-  position:relative;
+  justify-content:center;
   overflow:hidden;
 }
-.page-hero::before,
-.page-hero::after{display:none}
-.hero-inner{
-  max-width:800px;
-  margin:auto;
-  position:relative;
-  z-index:1;
+.logo-icon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
 }
-.page-hero h1{
-  margin:0 0 12px;
-  font-size:32px;
-  font-weight:800;
-  letter-spacing:1px;
-}
-.page-hero p{
-  margin:0 0 20px;
-  font-size:15px;
-  opacity:.88;
-  max-width:600px;
-  margin-left:auto;
-  margin-right:auto;
-  line-height:1.6;
-}
-.hero-search-wrap{
+.header-left{
   display:flex;
   align-items:center;
-  background:#fff;
-  border-radius:12px;
-  padding:8px 16px;
-  box-shadow:0 4px 14px rgba(0,0,0,.08);
-  max-width:460px;
-  margin:0 auto;
-  position:relative;
-  z-index:2;
+  gap:16px;
 }
-.hero-search-wrap .search-icon{
-  color:var(--text-muted);
-  font-size:18px;
-  margin-right:8px;
-}
-.hero-search-wrap input{
-  border:none;
-  background:transparent;
-  font:14px 'Noto Sans',sans-serif;
-  color:var(--text);
-  outline:none;
-  flex:1;
-  padding:8px 0;
-  width:100%;
-}
-.hero-search-wrap input::placeholder{color:var(--text-muted)}
 
-/* ═══════════════════ FILTER BAR — tabs only ═══════════════════ */
-.filter-section{
-  background:var(--white);
-  border-bottom:1px solid var(--line);
-  padding:14px 20px;
-  z-index:150;
-}
-.filter-inner{
-  max-width:1200px;
-  margin:auto;
-  display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-.filter-inner .search-wrap{
-  position:relative;
+.header-center{
   flex:1;
-  min-width:200px;
+  max-width:400px;
+  margin:0 24px;
+  position:relative;
 }
-.filter-inner .search-wrap input{
+.header-search{
   width:100%;
-  padding:9px 14px 9px 36px;
-  border:1px solid var(--line);
-  border-radius:8px;
+  padding:9px 14px 9px 40px;
+  border:none;
+  border-radius:var(--radius-sm);
   background:var(--bg);
-  font:14px 'Noto Sans',sans-serif;
+  font:14px var(--font);
   outline:none;
   transition:all var(--transition);
 }
-.filter-inner .search-wrap input::placeholder{color:var(--text-muted)}
-.filter-inner .search-wrap input:focus{
-  border-color:var(--blue);
-  box-shadow:0 0 0 3px rgba(19,92,197,.1);
+.header-search:focus{
   background:var(--white);
+  box-shadow:0 0 0 2px var(--primary-light);
 }
-.filter-inner .search-wrap .search-icon{
+.header-search::placeholder{color:var(--text-muted)}
+.header-search-icon{
   position:absolute;
-  left:12px;
+  left:14px;
   top:50%;
   transform:translateY(-50%);
   color:var(--text-muted);
   font-size:15px;
   pointer-events:none;
 }
-.filter-tabs{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.filter-tab{
-  padding:7px 16px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  background:var(--white);
-  color:var(--text-light);
-  font-size:13px;
-  font-weight:500;
-  cursor:pointer;
-  transition:all var(--transition);
-  white-space:nowrap;
-}
-.filter-tab:hover{
-  border-color:var(--blue);
-  color:var(--blue);
-}
-.filter-tab.active{
-  background:var(--blue);
-  border-color:var(--blue);
-  color:#fff;
-}
-.filter-tab .count{
-  display:inline-block;
-  margin-left:4px;
-  font-size:11px;
-  opacity:.7;
-}
-
-/* ═══════════════════ MAIN CONTENT ═══════════════════ */
-.main-container{
-  max-width:1200px;
-  margin:0 auto 60px;
-  padding:24px 20px;
-  flex:1;
-  width:100%;
-}
-
-/* ═══════════════════ QUICK ACCESS CARDS (Notion-style) ═══════════════════ */
-.quick-cards{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-  margin-bottom:32px;
-}
-@media(max-width:720px){
-  .quick-cards{grid-template-columns:1fr}
-}
-@media(min-width:721px)and(max-width:960px){
-  .quick-cards{grid-template-columns:repeat(2,1fr)}
-}
-.quick-card{
-  background:var(--white);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:20px;
-  cursor:pointer;
-  transition:all var(--transition);
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.quick-card:hover{
-  box-shadow:var(--shadow-lg);
-  transform:translateY(-2px);
-  border-color:var(--blue-light);
-}
-.quick-card .qc-icon{
-  font-size:28px;
-  line-height:1;
-}
-.quick-card h3{
-  font-size:15px;
-  font-weight:700;
-  color:var(--text);
-  line-height:1.4;
-}
-.quick-card p{
-  font-size:13px;
-  color:var(--text-light);
-  line-height:1.5;
-  flex:1;
-}
-.quick-card .qc-arrow{
-  color:var(--blue);
-  font-size:13px;
-  font-weight:600;
+.header-right{
   display:flex;
   align-items:center;
-  gap:4px;
+  gap:20px;
+}
+.header-nav-link{
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-secondary);
+  text-decoration:none;
+  padding:6px 0;
+  transition:all var(--transition);
+  white-space:nowrap;
+  position:relative;
+}
+.header-nav-link:hover{color:var(--primary)}
+.header-nav-link.active{
+  color:var(--primary);
+}
+.header-nav-link.active::after{
+  content:'';
+  position:absolute;
+  bottom:-2px;left:0;right:0;
+  height:2px;
+  background:var(--primary);
+  border-radius:1px;
 }
 
-/* ═══════════════════ FEED SECTION ═══════════════════ */
+/* ═══════════════════════════ LAYOUT ═══════════════════════════ */
+.layout{
+  display:flex;
+  max-width:1440px;
+  margin:0 auto;
+  padding-top:var(--header-h);
+  min-height:100vh;
+}
+
+/* ═══════════════════════════ MAIN CONTENT ═══════════════════════════ */
+.content{
+  flex:1;
+  min-width:0;
+  padding:24px 28px 100px;
+}
+.content-grid{
+  display:grid;
+  grid-template-columns: 1fr 360px;
+  gap:28px;
+  align-items:start;
+}
+
+/* ═══════════════════════════ BANNER ═══════════════════════════ */
+.banner-section{
+  grid-column:1/-1;
+  margin-bottom:4px;
+}
+.banner-slider{
+  position:relative;
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:linear-gradient(135deg,#001a4d 0%,var(--primary) 50%,#0088cc 100%);
+  color:#fff;
+  min-height:200px;
+  display:flex;
+  align-items:center;
+}
+.banner-slide{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:36px 40px;
+  width:100%;
+}
+.banner-text{flex:1;max-width:520px}
+.banner-text .b-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.15);
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-bottom:12px;
+}
+.banner-text h2{
+  font-size:26px;
+  font-weight:800;
+  line-height:1.3;
+  margin-bottom:10px;
+}
+.banner-text p{
+  font-size:14px;
+  opacity:.85;
+  line-height:1.5;
+  margin-bottom:18px;
+}
+.banner-cta{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:10px 24px;
+  border-radius:var(--radius-sm);
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  font-size:14px;
+  border:none;
+  cursor:pointer;
+  transition:all var(--transition);
+}
+.banner-cta:hover{background:#e67800;transform:translateY(-1px)}
+.banner-illustration{
+  flex-shrink:0;
+  width:200px;height:160px;
+  background:rgba(255,255,255,.08);
+  border-radius:var(--radius);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:64px;
+  margin-left:24px;
+}
+.banner-dots{
+  position:absolute;
+  bottom:16px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:8px;
+}
+.banner-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:rgba(255,255,255,.35);
+  cursor:pointer;
+  transition:all var(--transition);
+  border:none;
+}
+.banner-dot.active{width:24px;border-radius:4px;background:#fff}
+.banner-arrows{
+  position:absolute;
+  top:50%;left:12px;right:12px;
+  transform:translateY(-50%);
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+}
+.banner-arrow{
+  width:36px;height:36px;
+  border-radius:50%;
+  background:rgba(255,255,255,.2);
+  border:none;
+  color:#fff;
+  font-size:16px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:all;
+  transition:all var(--transition);
+  backdrop-filter:blur(4px);
+}
+.banner-arrow:hover{background:rgba(255,255,255,.4)}
+
+/* ═══════════════════════════ LEFT COL — FEED ═══════════════════════════ */
 .feed-section{
-  margin-bottom:28px;
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--line-light);
+  overflow:hidden;
 }
 .feed-header{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-bottom:16px;
-  padding-bottom:10px;
-  border-bottom:2px solid var(--blue);
+  padding:18px 24px 14px;
+  border-bottom:1px solid var(--line-light);
 }
 .feed-header h2{
-  font-size:20px;
+  font-size:18px;
   font-weight:700;
   color:var(--text);
   display:flex;
   align-items:center;
   gap:8px;
 }
-.feed-header .feed-count{
-  font-size:12px;
-  font-weight:500;
-  color:var(--text-muted);
-  background:var(--line-light);
-  padding:2px 10px;
-  border-radius:999px;
-}
 .feed-header .view-all{
   font-size:13px;
   font-weight:600;
-  color:var(--blue);
+  color:var(--primary);
   cursor:pointer;
   display:flex;
   align-items:center;
   gap:4px;
   transition:gap var(--transition);
 }
-.feed-header .view-all:hover{gap:6px}
-
-/* Feed list */
+.feed-header .view-all:hover{gap:8px}
 .feed-list{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
+  padding:8px 0;
 }
 .feed-card{
-  background:var(--white);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  overflow:hidden;
-  transition:all var(--transition);
-  cursor:pointer;
-}
-.feed-card:hover{
-  box-shadow:var(--shadow-md);
-  border-color:var(--blue-light);
-}
-.feed-card-inner{
   display:flex;
-  gap:0;
-}
-.feed-card-thumb{
-  width:200px;
-  min-height:140px;
-  flex-shrink:0;
-  background:#f0f2f5;
+  gap:14px;
+  padding:16px 24px;
+  cursor:pointer;
+  transition:all var(--transition);
+  border-bottom:1px solid var(--line-light);
   position:relative;
-  overflow:hidden;
 }
-.feed-card-thumb img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  position:absolute;
-  top:0;left:0;
-}
-.feed-card-thumb .thumb-placeholder{
-  width:100%;
-  height:100%;
+.feed-card:last-child{border-bottom:none}
+.feed-card:hover{background:var(--primary-50)}
+.feed-icon{
+  width:44px;height:44px;
+  border-radius:var(--radius-sm);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:36px;
-  opacity:.5;
+  font-size:20px;
+  flex-shrink:0;
 }
-.feed-card-thumb .tag-overlay{
-  position:absolute;
-  top:10px;
-  left:10px;
-  padding:3px 10px;
-  border-radius:4px;
-  font-size:10px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-  color:#fff;
+.feed-icon.schedule{background:var(--primary-light);color:var(--primary)}
+.feed-icon.lesson{background:var(--green-light);color:var(--green)}
+.feed-icon.exam{background:var(--purple-light);color:var(--purple)}
+.feed-icon.result{background:var(--accent-light);color:var(--accent)}
+.feed-icon.class{background:var(--teal-light);color:var(--teal)}
+.feed-icon.system{background:#f3f4f6;color:var(--text-secondary)}
+.feed-icon.event{background:var(--red-light);color:var(--red)}
+.feed-icon.promo{background:var(--orange-light);color:var(--orange)}
+.feed-body{flex:1;min-width:0}
+.feed-body .feed-title{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  line-height:1.4;
+  margin-bottom:4px;
 }
-.tag-overlay.urgent{background:var(--tag-red)}
-.tag-overlay.important{background:var(--tag-orange)}
-.tag-overlay.normal{background:var(--tag-green)}
-.tag-overlay.event{background:var(--tag-purple)}
-.tag-overlay.notice{background:var(--tag-blue)}
-
-.feed-card-body{
-  flex:1;
-  padding:18px 20px;
+.feed-card:hover .feed-title{color:var(--primary)}
+.feed-body .feed-desc{
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.5;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.feed-meta{
   display:flex;
-  flex-direction:column;
-  gap:8px;
-  min-width:0;
-}
-.feed-card-body .card-meta{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
   align-items:center;
+  gap:10px;
+  margin-top:8px;
+  flex-wrap:wrap;
 }
-.card-meta .card-date{
+.feed-time{
   font-size:12px;
   color:var(--text-muted);
   display:flex;
   align-items:center;
   gap:4px;
 }
-.card-meta .card-category{
-  font-size:11px;
-  font-weight:600;
+.feed-badge{
+  font-size:10px;
+  font-weight:700;
   padding:2px 8px;
-  border-radius:4px;
+  border-radius:999px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
 }
-.card-category.urgent{background:#fce4ec;color:#c2185b}
-.card-category.important{background:#fff8e0;color:#f9a825}
-.card-category.normal{background:#e8f5e9;color:#2e7d32}
-.card-category.event{background:#f3e5f5;color:#6a1b9a}
-.card-category.notice{background:#e3f2fd;color:#1565c0}
+.feed-badge.new{background:var(--green-light);color:var(--green)}
+.feed-badge.hot{background:var(--red-light);color:var(--red)}
+.feed-badge.urgent{background:var(--accent-light);color:var(--accent)}
+.feed-category{
+  font-size:10px;
+  font-weight:600;
+  color:var(--text-muted);
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+.feed-arrow{
+  color:var(--line);
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  flex-shrink:0;
+  transition:all var(--transition);
+}
+.feed-card:hover .feed-arrow{color:var(--primary);transform:translateX(4px)}
 
-.feed-card-body h3{
-  font-size:16px;
+/* ═══════════════════════════ RIGHT COL ═══════════════════════════ */
+.right-col{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+/* Quick Access */
+.quick-section{
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--line-light);
+  overflow:hidden;
+}
+.section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 20px 12px;
+  border-bottom:1px solid var(--line-light);
+}
+.section-header h3{
+  font-size:15px;
   font-weight:700;
   color:var(--text);
-  line-height:1.4;
-  margin:0;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-}
-.feed-card-body .card-desc{
-  font-size:13.5px;
-  color:var(--text-light);
-  line-height:1.5;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-}
-.feed-card-body .card-footer{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-top:auto;
-  padding-top:6px;
-}
-.card-footer .read-more{
-  font-size:12px;
-  font-weight:600;
-  color:var(--blue);
-  display:flex;
-  align-items:center;
-  gap:3px;
-}
-.card-footer .card-stats{
-  font-size:11px;
-  color:var(--text-muted);
-  display:flex;
-  gap:10px;
-  margin-left:auto;
-}
-
-@media(max-width:640px){
-  .feed-card-inner{flex-direction:column}
-  .feed-card-thumb{width:100%;height:120px;position:relative}
-}
-
-/* ═══════════════════ NEW FEED — Box trạng thái ═══════════════════ */
-.new-post-box{
-  background:var(--white);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:18px 20px;
-  margin-bottom:20px;
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-}
-.new-post-avatar{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  background:var(--blue-soft);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:18px;
-  flex-shrink:0;
-}
-.new-post-input{
-  flex:1;
-  padding:10px 14px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  font:14px 'Noto Sans',sans-serif;
-  outline:none;
-  cursor:text;
-  color:var(--text-light);
-  background:var(--bg);
-  transition:all var(--transition);
-}
-.new-post-input:focus{
-  border-color:var(--blue);
-  background:var(--white);
-}
-.new-post-actions{
-  display:flex;
-  gap:10px;
-  margin-top:10px;
-}
-.new-post-actions button{
-  padding:7px 18px;
-  border-radius:6px;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all var(--transition);
-  border:none;
-}
-.new-post-actions .btn-post{
-  background:var(--blue);
-  color:#fff;
-}
-.new-post-actions .btn-post:hover{background:var(--blue-dark)}
-.new-post-actions .btn-cancel{
-  background:var(--bg);
-  color:var(--text-light);
-  border:1px solid var(--line);
-}
-.new-post-actions .btn-cancel:hover{background:var(--line-light)}
-
-/* ═══════════════════ MANAGE NEWS AREA (Admin zone) ═══════════════════ */
-.admin-zone{
-  background:var(--white);
-  border:2px dashed var(--line);
-  border-radius:var(--radius-lg);
-  padding:24px;
-  margin-top:28px;
-  transition:all var(--transition);
-}
-.admin-zone:hover{border-color:var(--blue-light)}
-.admin-zone-title{
   display:flex;
   align-items:center;
   gap:8px;
-  font-size:16px;
-  font-weight:700;
-  color:var(--text);
-  margin-bottom:16px;
 }
-.admin-zone-title .az-badge{
-  font-size:10px;
-  font-weight:700;
-  text-transform:uppercase;
-  padding:2px 8px;
-  border-radius:4px;
-  background:var(--blue);
-  color:#fff;
-  letter-spacing:.5px;
+.section-header .view-link{
+  font-size:12px;
+  font-weight:600;
+  color:var(--primary);
+  cursor:pointer;
 }
-.admin-form{
+.quick-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:14px;
+  gap:8px;
+  padding:12px 16px 16px;
 }
-.admin-form .full-width{grid-column:1/-1}
-.admin-form label{
-  display:block;
-  font-size:13px;
-  font-weight:600;
-  color:var(--text);
-  margin-bottom:4px;
-}
-.admin-form input,.admin-form select,.admin-form textarea{
-  width:100%;
-  padding:9px 12px;
-  border:1px solid var(--line);
-  border-radius:6px;
-  font:14px 'Noto Sans',sans-serif;
-  outline:none;
-  transition:all var(--transition);
-  background:var(--bg);
-}
-.admin-form input:focus,.admin-form select:focus,.admin-form textarea:focus{
-  border-color:var(--blue);
-  box-shadow:0 0 0 3px rgba(19,92,197,.08);
-  background:var(--white);
-}
-.admin-form textarea{
-  resize:vertical;
-  min-height:80px;
-}
-.admin-form .form-actions{
-  grid-column:1/-1;
+.quick-item{
   display:flex;
-  gap:10px;
-  padding-top:8px;
-}
-.admin-form .form-actions button{
-  padding:9px 24px;
-  border-radius:6px;
-  font-size:14px;
-  font-weight:600;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  padding:14px 8px;
+  border-radius:var(--radius-sm);
+  background:var(--bg);
   cursor:pointer;
   transition:all var(--transition);
-  border:none;
-}
-.form-actions .btn-save{
-  background:var(--blue);
-  color:#fff;
-}
-.form-actions .btn-save:hover{background:var(--blue-dark)}
-.form-actions .btn-preview{
-  background:var(--bg);
+  text-decoration:none;
   color:var(--text);
-  border:1px solid var(--line);
 }
-.form-actions .btn-preview:hover{background:var(--line-light)}
-
-@media(max-width:640px){
-  .admin-form{grid-template-columns:1fr}
+.quick-item:hover{
+  background:var(--primary-light);
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-sm);
 }
-
-/* ═══════════════════ EMPTY STATE ═══════════════════ */
-.empty-state{
+.quick-item .qi-icon{
+  font-size:24px;
+  width:40px;height:40px;
+  border-radius:var(--radius-sm);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.quick-item .qi-icon.purple{background:var(--purple-light);color:var(--purple)}
+.quick-item .qi-icon.green{background:var(--green-light);color:var(--green)}
+.quick-item .qi-icon.blue{background:var(--primary-light);color:var(--primary)}
+.quick-item .qi-icon.orange{background:var(--accent-light);color:var(--accent)}
+.quick-item .qi-icon.teal{background:var(--teal-light);color:var(--teal)}
+.quick-item .qi-icon.pink{background:#fce4ec;color:#e91e63}
+.quick-item span{
+  font-size:12px;
+  font-weight:500;
   text-align:center;
-  padding:50px 20px;
+  line-height:1.3;
+}
+
+/* Upcoming Classes */
+.class-card{
+  padding:14px 20px;
+  border-bottom:1px solid var(--line-light);
+  cursor:pointer;
+  transition:all var(--transition);
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+.class-card:last-child{border-bottom:none}
+.class-card:hover{background:var(--primary-50)}
+.class-date{
+  width:50px;
+  text-align:center;
+  flex-shrink:0;
+}
+.class-date .cd-day{
+  font-size:20px;
+  font-weight:800;
+  color:var(--primary);
+  line-height:1;
+}
+.class-date .cd-month{
+  font-size:10px;
+  font-weight:600;
+  color:var(--text-muted);
+  text-transform:uppercase;
+}
+.class-date .cd-time{
+  font-size:10px;
+  font-weight:600;
+  color:var(--accent);
+  margin-top:2px;
+}
+.class-info{flex:1;min-width:0}
+.class-info .ci-subject{
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+  line-height:1.3;
+  margin-bottom:2px;
+}
+.class-info .ci-teacher{
+  font-size:12px;
   color:var(--text-muted);
 }
-.empty-state .empty-icon{
-  font-size:48px;
-  margin-bottom:12px;
-  opacity:.4;
+.class-arrow{
+  color:var(--line);
+  font-size:16px;
+  transition:all var(--transition);
 }
-.empty-state h3{
-  font-size:18px;
-  font-weight:700;
-  color:var(--text);
-  margin-bottom:6px;
-}
-.empty-state p{font-size:14px}
+.class-card:hover .class-arrow{color:var(--primary);transform:translateX(3px)}
 
-/* ═══════════════════ FOOTER ═══════════════════ */
-.footer{
-  background:var(--nav-bg);
-  color:#8892a4;
-  padding:32px 20px 24px;
-  margin-top:auto;
+/* Fixed links */
+.links-list{
+  padding:8px 4px;
 }
-.footer-inner{
-  max-width:1200px;
-  margin:auto;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:24px;
-}
-.footer-col h4{
-  color:#c8cdd8;
+.link-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 16px;
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  transition:all var(--transition);
   font-size:13px;
-  font-weight:700;
-  text-transform:uppercase;
-  margin-bottom:10px;
-  letter-spacing:.5px;
-}
-.footer-col ul{list-style:none;padding:0}
-.footer-col ul li{margin-bottom:5px}
-.footer-col ul li a{
-  color:#8892a4;
-  font-size:13px;
+  font-weight:500;
+  color:var(--text-secondary);
   text-decoration:none;
-  transition:color var(--transition);
 }
-.footer-col ul li a:hover{color:#fff}
-.footer-bottom{
-  max-width:1200px;
-  margin:20px auto 0;
-  padding-top:16px;
-  border-top:1px solid rgba(255,255,255,.08);
-  font-size:12px;
+.link-item:hover{
+  background:var(--primary-light);
+  color:var(--primary);
+}
+.link-item .li-icon{
+  font-size:16px;
+  width:20px;
   text-align:center;
-  color:#6a7284;
-}
-.footer-bottom a{color:#8892a4}
-.footer-bottom a:hover{color:#fff}
-@media(max-width:720px){
-  .footer-inner{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:480px){
-  .footer-inner{grid-template-columns:1fr}
 }
 
-/* ═══════════════════ MODAL DETAIL ═══════════════════ */
+/* Achievement */
+.achievement-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  padding:16px 20px;
+}
+.achievement-card{
+  background:var(--bg);
+  border-radius:var(--radius-sm);
+  padding:14px;
+  text-align:center;
+}
+.achievement-card .ac-number{
+  font-size:24px;
+  font-weight:800;
+  color:var(--primary);
+  line-height:1;
+}
+.achievement-card .ac-label{
+  font-size:11px;
+  color:var(--text-muted);
+  margin-top:4px;
+  font-weight:500;
+}
+.achievement-card.highlight{
+  grid-column:1/-1;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  text-align:left;
+}
+.achievement-card.highlight .ac-number{font-size:28px;flex-shrink:0;width:56px}
+.achievement-card.highlight .ac-bar{
+  flex:1;
+  height:8px;
+  border-radius:4px;
+  background:var(--line);
+  overflow:hidden;
+}
+.achievement-card.highlight .ac-bar-fill{
+  height:100%;
+  border-radius:4px;
+  background:linear-gradient(90deg,var(--primary),#2a7fd4);
+}
+.achievement-card.highlight .ac-label{margin-top:0;font-size:11px}
+
+/* Motivation Banner */
+.motivation-banner{
+  background:linear-gradient(135deg,var(--primary),#003d7a);
+  border-radius:var(--radius);
+  padding:24px 20px;
+  color:#fff;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.motivation-banner::before{
+  content:'';
+  position:absolute;
+  top:-40%;right:-20%;
+  width:200px;height:200px;
+  border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.motivation-banner .mot-icon{
+  font-size:40px;
+  margin-bottom:8px;
+  position:relative;
+}
+.motivation-banner p{
+  font-size:15px;
+  font-weight:600;
+  line-height:1.5;
+  position:relative;
+}
+.motivation-banner .mot-sub{
+  font-size:12px;
+  opacity:.8;
+  margin-top:6px;
+  font-weight:400;
+}
+
+/* ═══════════════════════════ BOTTOM NAV (MOBILE) ═══════════════════════════ */
+.bottom-nav{
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:64px;
+  background:var(--white);
+  border-top:1px solid var(--line-light);
+  z-index:1000;
+  padding:0 8px;
+  box-shadow:0 -2px 10px rgba(0,0,0,.04);
+}
+.bottom-nav-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  height:100%;
+  max-width:480px;
+  margin:auto;
+}
+.nav-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  padding:4px 12px;
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  text-decoration:none;
+  transition:all var(--transition);
+  position:relative;
+  border:none;
+  background:transparent;
+  color:var(--text-muted);
+  font-family:var(--font);
+}
+.nav-item .ni-icon{
+  font-size:22px;
+  line-height:1;
+}
+.nav-item .ni-label{
+  font-size:10px;
+  font-weight:500;
+}
+.nav-item.active{color:var(--primary)}
+.nav-item .ni-badge{
+  position:absolute;
+  top:0;right:2px;
+  min-width:16px;height:16px;
+  border-radius:8px;
+  background:var(--red);
+  color:#fff;
+  font-size:9px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px solid var(--white);
+}
+
+/* ═══════════════════════════ MODAL (detail popup) ═══════════════════════════ */
 .modal-overlay{
   position:fixed;
   top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,.5);
+  background:rgba(0,0,0,.45);
   z-index:3000;
   display:none;
   align-items:center;
   justify-content:center;
   padding:20px;
+  backdrop-filter:blur(4px);
 }
 .modal-overlay.show{display:flex}
 .modal-content{
   background:var(--white);
-  max-width:720px;
+  max-width:600px;
   width:100%;
-  max-height:88vh;
-  border-radius:var(--radius-lg);
+  max-height:80vh;
+  border-radius:var(--radius);
   overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.25);
-  position:relative;
+  box-shadow:0 20px 60px rgba(0,0,0,.2);
 }
 .modal-header{
   padding:18px 24px;
-  border-bottom:1px solid var(--line);
+  border-bottom:1px solid var(--line-light);
   display:flex;
   align-items:center;
   justify-content:space-between;
-  position:sticky;top:0;
-  background:var(--white);
-  z-index:10;
 }
-.modal-header h2{
-  font-size:18px;
-  font-weight:700;
-  color:var(--text);
-  margin:0;
-  flex:1;
-  margin-right:12px;
-  line-height:1.4;
-}
+.modal-header h2{font-size:17px;font-weight:700;flex:1;margin-right:12px;line-height:1.4}
 .modal-close{
-  width:34px;height:34px;
+  width:32px;height:32px;
   border-radius:50%;
   border:none;
-  background:#f5f5f5;
-  color:#666;
-  font-size:18px;
+  background:var(--bg);
+  color:var(--text-secondary);
+  font-size:16px;
   cursor:pointer;
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:all .2s;
+  transition:all var(--transition);
 }
-.modal-close:hover{background:#e0e0e0;color:#333}
+.modal-close:hover{background:var(--line);color:var(--text)}
 .modal-body{
   padding:24px;
   overflow-y:auto;
-  max-height:65vh;
+  max-height:60vh;
   line-height:1.7;
+  font-size:14px;
 }
 .modal-body .modal-meta{
   display:flex;
   gap:12px;
   flex-wrap:wrap;
-  margin-bottom:18px;
+  margin-bottom:16px;
   padding-bottom:12px;
-  border-bottom:1px solid var(--line);
-  font-size:13px;
-  color:var(--text-light);
-}
-.modal-body .modal-text{
-  white-space:pre-wrap;
-  font-size:14px;
-  line-height:1.7;
-  color:var(--text);
-}
-
-/* ═══════════════════ NEW LAYOUT — 3-BLOCK FEED ═══════════════════ */
-.new-layout-container{
-  display:flex;
-  flex-wrap:wrap;
-  gap:24px;
-  margin-bottom:24px;
-}
-
-/* Block 1 & 2 in same row: 2/3 + 1/3 */
-.tin-nong-block{
-  flex:0 0 calc(66.666% - 12px);
-  max-width:calc(66.666% - 12px);
-}
-.so-tay-block{
-  flex:0 0 calc(33.333% - 12px);
-  max-width:calc(33.333% - 12px);
-}
-/* Block 3 below, same width as row */
-.tin-cap-nhat-block{
-  flex:0 0 100%;
-  max-width:100%;
-}
-
-.content-block{
-  background:var(--white);
-  border:1px solid var(--line);
-  border-radius:var(--radius-lg);
-  overflow:hidden;
-  transition:box-shadow var(--transition);
-}
-.content-block:hover{
-  box-shadow:var(--shadow-md);
-}
-
-.block-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:16px 20px 14px;
-  border-bottom:2px solid var(--blue);
-  background:var(--blue-soft);
-}
-.block-header h2{
-  font-size:17px;
-  font-weight:700;
-  color:var(--text);
-  margin:0;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.block-count{
-  font-size:12px;
-  font-weight:500;
-  color:var(--text-muted);
-  background:var(--white);
-  padding:2px 10px;
-  border-radius:999px;
-  border:1px solid var(--line);
-}
-
-/* Tin Nóng list */
-.tin-nong-content,
-.so-tay-content{
-  padding:10px 0;
-  max-height:420px;
-  overflow-y:auto;
-}
-
-.tin-item{
-  padding:12px 20px;
-  cursor:pointer;
-  transition:all var(--transition);
   border-bottom:1px solid var(--line-light);
-  display:flex;
-  align-items:flex-start;
-  gap:10px;
-}
-.tin-item:last-child{border-bottom:none}
-.tin-item:hover{
-  background:var(--blue-soft);
-}
-.tin-item .tin-badge{
-  flex-shrink:0;
-  width:24px;
-  height:24px;
-  border-radius:50%;
-  background:var(--tag-red);
-  color:#fff;
-  font-size:11px;
-  font-weight:700;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-top:2px;
-}
-.tin-item .tin-badge.so-tay-badge{
-  background:var(--tag-blue);
-}
-.tin-item .tin-badge.cap-nhat-badge{
-  background:var(--tag-green);
-}
-.tin-item .tin-info{flex:1;min-width:0}
-.tin-item .tin-title{
-  font-size:13.5px;
-  font-weight:600;
-  color:var(--text);
-  line-height:1.4;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-}
-.tin-item:hover .tin-title{color:var(--blue)}
-.tin-item .tin-meta{
-  font-size:11.5px;
-  color:var(--text-muted);
-  margin-top:4px;
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-.tin-item .tin-arrow{
-  color:var(--text-muted);
-  font-size:14px;
-  flex-shrink:0;
-  margin-top:4px;
-  transition:transform var(--transition);
-}
-.tin-item:hover .tin-arrow{
-  color:var(--blue);
-  transform:translateX(3px);
+  font-size:13px;
+  color:var(--text-secondary);
 }
 
-/* Tin Cập Nhật — Notion-style card grid */
-.tin-cap-nhat-content{
-  padding:16px 20px;
-  max-height:520px;
-  overflow-y:auto;
+/* ═══════════════════════════ RESPONSIVE ═══════════════════════════ */
+@media(max-width:1200px){
+  .content{padding:20px 24px 100px}
+  .content-grid{grid-template-columns:1fr 320px;gap:24px}
 }
-.cap-nhat-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
+@media(max-width:1024px){
+  .content{padding:20px 16px 80px}
+  .content-grid{grid-template-columns:1fr 300px;gap:20px}
+  .banner-slide{padding:28px 24px;flex-direction:column;text-align:center}
+  .banner-text{max-width:100%}
+  .banner-illustration{margin:16px 0 0;width:140px;height:120px;font-size:48px}
+  .bottom-nav{display:block}
 }
-@media(max-width:960px){
-  .cap-nhat-grid{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:540px){
-  .cap-nhat-grid{grid-template-columns:1fr}
-}
-.cap-nhat-card{
-  background:var(--white);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  overflow:hidden;
-  cursor:pointer;
-  transition:all var(--transition);
-}
-.cap-nhat-card:hover{
-  box-shadow:var(--shadow-lg);
-  transform:translateY(-2px);
-  border-color:var(--blue-light);
-}
-.cap-nhat-card .card-cover{
-  height:110px;
-  background:linear-gradient(135deg,#1a2a6c,#2563eb);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-size:36px;
-  opacity:.85;
-}
-.cap-nhat-card .card-cover.alt1{background:linear-gradient(135deg,#1e3a5f,#3a7bd5)}
-.cap-nhat-card .card-cover.alt2{background:linear-gradient(135deg,#2d3a5f,#5e72e4)}
-.cap-nhat-card .card-cover.alt3{background:linear-gradient(135deg,#3a1a5f,#8e44ad)}
-.cap-nhat-card .card-cover.alt4{background:linear-gradient(135deg,#1a5f3a,#27ae60)}
-.cap-nhat-card .card-body{
-  padding:14px 16px 16px;
-}
-.cap-nhat-card .card-body h4{
-  font-size:13.5px;
-  font-weight:700;
-  color:var(--text);
-  margin:0 0 6px;
-  line-height:1.4;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-}
-.cap-nhat-card .card-body p{
-  font-size:12px;
-  color:var(--text-light);
-  line-height:1.5;
-  margin:0;
-  display:-webkit-box;
-  -webkit-line-clamp:3;
-  -webkit-box-orient:vertical;
-  overflow:hidden;
-}
-.cap-nhat-card .card-footer{
-  padding:8px 16px 12px;
-  border-top:1px solid var(--line-light);
-  font-size:11px;
-  color:var(--text-muted);
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-/* So Tay items style different — list-like */
-.so-tay-content .tin-item .tin-badge{
-  background:var(--tag-blue);
-}
-
-/* ═══════════════════ RESPONSIVE ═══════════════════ */
 @media(max-width:768px){
-  .page-hero h1{font-size:26px}
-  .page-hero{padding:30px 16px 28px}
-  .filter-tabs{gap:4px}
-  .filter-tab{padding:6px 12px;font-size:12px}
-  .main-container{padding:16px 14px}
-  .tin-nong-block,.so-tay-block{
-    flex:0 0 100%;
-    max-width:100%;
-  }
-  .tin-nong-content,.so-tay-content{max-height:320px}
-  .tin-cap-nhat-content{max-height:400px}
-  .top-bar-right .hotline{display:none}
+  .content-grid{grid-template-columns:1fr;gap:20px}
+  .right-col{max-width:480px;margin:0 auto;width:100%}
+  .banner-text h2{font-size:22px}
+  .header-search{display:none}
+  .header-center{display:none}
+  .feed-card{padding:14px 16px}
+  .feed-header{padding:14px 16px}
+  .feed-header h2{font-size:16px}
 }
 @media(max-width:480px){
-  .page-hero h1{font-size:22px}
-  .hero-stats{gap:12px;flex-wrap:wrap}
-  .admin-zone{padding:16px}
+  .header{padding:0 12px}
+  .banner-slide{padding:20px 16px}
+  .banner-text h2{font-size:20px}
+  .quick-grid{gap:6px}
+  .quick-item{padding:10px 6px}
+  .feed-card{gap:12px}
 }
 </style>
 </head>
 <body>
 
-<!-- ═══ TOP BAR (HOCMAI style) ═══ -->
-<header class="top-bar">
-  <div class="top-bar-inner">
-    <a href="#" class="logo-link">
-      <img class="logo-img" src="https://blog.hocmai.vn/wp-content/uploads/2018/01/Logo-hocmai.png" alt="HOCMAI" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-      <span class="logo-text" style="display:none"><span>HOC</span>MAI</span>
-    </a>
-    <div class="top-bar-right">
-      <span class="hotline">📞 <i>1900 6933</i></span>
-      <a href="#" class="btn-login">Đăng Nhập</a>
-      <a href="#" class="btn-register">Đăng Ký</a>
+<!-- ═══════ HEADER ═══════ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <a href="#" class="logo">
+        <div class="logo-icon"><img src="Logo-hocmai.png" alt="HOCMAI"></div>
+      </a>
+    </div>
+    <div class="header-center">
+      <span class="header-search-icon">🔍</span>
+      <input class="header-search" type="text" placeholder="Tìm kiếm tin tức..." />
+    </div>
+    <div class="header-right">
+      <a href="https://hocmai.vn/study/dashboard/overview" class="header-nav-link">Tổng quan</a>
+      <span class="header-nav-link active">Thông tin học tập</span>
+      <a href="https://hocmai.vn/ho-tro/" class="header-nav-link">Hỗ trợ</a>
     </div>
   </div>
 </header>
 
-<!-- ═══ PAGE HERO / TITLE ═══ -->
-<section class="page-hero">
-  <div class="hero-inner">
-    <h1>TRANG THÔNG TIN HỌC TẬP</h1>
-    <p>Cập nhật đầy đủ tin tức về học tập, sự kiện dành cho học viên HOCMAI</p>
-    <div class="hero-search-wrap">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Tìm kiếm tin tức..." oninput="renderFeed()">
-    </div>
-  </div>
-</section>
+<!-- ═══════ LAYOUT ═══════ -->
+<div class="layout">
 
-<!-- ═══ MAIN CONTENT ═══ -->
-<main class="main-container">
+  <!-- ═══════ MAIN CONTENT ═══════ -->
+  <main class="content">
 
-  <!-- Filter tabs only -->
-  <section class="filter-section" id="filterSection">
-    <div class="filter-inner">
-      <div class="filter-tabs" id="filterTabs">
-        <span class="filter-tab active" data-filter="all" onclick="setFilter('all',this)">Tất cả <span class="count" id="countAll">0</span></span>
-        <span class="filter-tab" data-filter="thongbao" onclick="setFilter('thongbao',this)">📢 Thông báo</span>
-        <span class="filter-tab" data-filter="sukien" onclick="setFilter('sukien',this)">📅 Sự kiện</span>
-        <span class="filter-tab" data-filter="tintuc" onclick="setFilter('tintuc',this)">📰 Tin tức</span>
-        <span class="filter-tab" data-filter="hoclieu" onclick="setFilter('hoclieu',this)">📚 Học liệu</span>
-      </div>
-    </div>
-  </section>
+    <div class="content-grid">
 
-  <!-- NEW LAYOUT: 3-BLOCK STRUCTURE -->
-  <div class="new-layout-container">
-    
-    <!-- Block 1: TIN NÓNG (Hot News) - 2/3 width -->
-    <div class="content-block tin-nong-block">
-      <div class="block-header">
-        <h2>🔥 TIN NÓNG</h2>
-        <span class="block-count" id="tinNongCount">0 tin</span>
-      </div>
-      <div class="tin-nong-content" id="tinNongContent">
-        <!-- Hot news will be rendered here -->
-        <div class="empty-state">
-          <div class="empty-icon">🔥</div>
-          <h3>Chưa có tin nóng</h3>
-          <p>Tin nóng sẽ xuất hiện tại đây.</p>
+      <section class="banner-section">
+        <div class="banner-slide" style="background:linear-gradient(135deg,#001a4d 0%,var(--primary) 50%,#0088cc 100%);color:#fff;padding:40px 48px;border-radius:var(--radius);display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,.15);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">🔥 TRANG THÔNG TIN HỖ TRỢ HỌC TẬP</span>
+            <h2 style="font-size:28px;font-weight:800;line-height:1.3;margin-bottom:10px;">Cập nhật tin tức mới nhất về thông báo, sự kiện, học tập dành cho học viên</h2>
+            <button style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-weight:600;font-size:14px;border:none;cursor:pointer;transition:all var(--transition)" onmouseover="this.style.background='#e67800';this.style.transform='translateY(-1px)'">Khám phá ngay →</button>
+          </div>
+          <div style="flex-shrink:0;width:200px;height:160px;background:rgba(255,255,255,.08);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:64px;margin-left:24px;">📚</div>
         </div>
-      </div>
-    </div>
-    
-    <!-- Block 2: SỔ TAY HỌC VIÊN (Student Notebook) - 1/3 width -->
-    <div class="content-block so-tay-block">
-      <div class="block-header">
-        <h2>📚 SỔ TAY HỌC VIÊN</h2>
-        <span class="block-count" id="soTayCount">0 mục</span>
-      </div>
-      <div class="so-tay-content" id="soTayContent">
-        <!-- Student notebook will be rendered here -->
-        <div class="empty-state">
-          <div class="empty-icon">📓</div>
-          <h3>Chưa có mục sổ tay</h3>
-          <p>Nội dung sổ tay học viên sẽ xuất hiện tại đây.</p>
+      </section>
+
+      <!-- ═══════ LEFT COL — FEED THÔNG BÁO ═══════ -->
+      <section class="feed-section">
+        <div class="feed-header">
+          <h2>🔔 Thông báo mới</h2>
+          <span class="view-all" onclick="viewAllNotif()">Xem tất cả →</span>
         </div>
-      </div>
-    </div>
-    
-    <!-- Row with Block 1 & Block 2 above -->
-    
-    <!-- Block 3: TIN CẬP NHẬT (Latest News) - 2/3 width (below) -->
-    <div class="content-block tin-cap-nhat-block">
-      <div class="block-header">
-        <h2>📰 TIN CẬP NHẬT</h2>
-        <span class="block-count" id="tinCapNhatCount">0 bài viết</span>
-      </div>
-      <div class="tin-cap-nhat-content" id="tinCapNhatContent">
-        <!-- Latest news from Notion page will be displayed here -->
-        <div class="empty-state">
-          <div class="empty-icon">📥</div>
-          <h3>Đang tải tin tức cập nhật...</h3>
-          <p>Nội dung từ trang thông tin Hocmai-Topuni Notion sẽ xuất hiện tại đây.</p>
+        <div class="feed-list" id="feedList">
+          <!-- Rendered by JS -->
         </div>
-      </div>
-    </div>
-    
+      </section>
+
+      <!-- ═══════ RIGHT COL ═══════ -->
+      <div class="right-col">
+
+        <!-- Sổ tay cho thành viên mới -->
+        <div class="quick-section">
+          <div class="section-header">
+            <h3>📖 Sổ tay cho thành viên mới</h3>
+          </div>
+          <div class="links-list" id="soTayList">
+            <a href="#" class="link-item"><span class="li-icon">📋</span> Đang tải...</a>
+          </div>
+        </div>
+
+        <!-- Lịch học sắp tới -->
+        <div class="quick-section">
+          <div class="section-header">
+            <h3>📅 Lịch học sắp tới</h3>
+          </div>
+          <div style="padding:0 16px 8px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line-light)" id="examFilters">
+            <button class="exam-filter active" data-exam="all" onclick="filterExam('all')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--primary);color:#fff;font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">Tất cả</button>
+            <button class="exam-filter" data-exam="hsa" onclick="filterExam('hsa')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">HSA</button>
+            <button class="exam-filter" data-exam="qda" onclick="filterExam('qda')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">QDA</button>
+            <button class="exam-filter" data-exam="tsa" onclick="filterExam('tsa')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">TSA</button>
+            <button class="exam-filter" data-exam="vact" onclick="filterExam('vact')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">V-ACT</button>
+            <button class="exam-filter" data-exam="tnthpt" onclick="filterExam('tnthpt')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">TN THPT</button>
+          </div>
+          <div class="schedule-list" id="scheduleList">
+            <!-- Rendered by JS -->
+          </div>
+          <div id="scheduleSeeMore" style="padding:8px 16px 14px;display:none;text-align:center;border-top:1px solid var(--line-light)">
+            <span class="view-link" onclick="toggleScheduleExpand()" style="cursor:pointer;font-size:13px;font-weight:600;color:var(--primary);display:inline-flex;align-items:center;gap:4px">
+              Xem thêm <span id="seeMoreArrow">▾</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Banner động lực -->
+        <div class="motivation-banner">
+          <div class="mot-icon">💪</div>
+          <p>Mỗi ngày học một chút,<br>gần hơn tới đại học.</p>
+          <div class="mot-sub">Cố lên, chúng tôi luôn đồng hành cùng bạn!</div>
+        </div>
+
+      </div><!-- /right-col -->
+    </div><!-- /content-grid -->
+  </main>
+</div><!-- /layout -->
+
+<!-- ═══════ BOTTOM NAV (mobile) ═══════ -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="nav-item active" onclick="location.href='#'">
+      <span class="ni-icon">🏠</span>
+      <span class="ni-label">Trang chủ</span>
+    </button>
+    <button class="nav-item" onclick="location.href='#'">
+      <span class="ni-icon">📈</span>
+      <span class="ni-label">Lộ trình</span>
+    </button>
+    <button class="nav-item" onclick="location.href='#'">
+      <span class="ni-icon">🔔</span>
+      <span class="ni-label">Feed</span>
+      <span class="ni-badge">3</span>
+    </button>
+    <button class="nav-item" onclick="location.href='#'">
+      <span class="ni-icon">👥</span>
+      <span class="ni-label">Cộng đồng</span>
+    </button>
+    <button class="nav-item" onclick="location.href='#'">
+      <span class="ni-icon">👤</span>
+      <span class="ni-label">Cá nhân</span>
+    </button>
   </div>
+</nav>
 
-  <!-- Feed Section (to keep for later display if needed) -->
-  <section class="feed-section" id="feedSection" style="display:none;">
-    <div class="feed-header">
-      <h2>
-        📰 Bảng tin
-        <span class="feed-count" id="feedCount">0 bài viết</span>
-      </h2>
-      <span class="view-all" onclick="setFilter('all',document.querySelector('[data-filter=all]'))">Xem tất cả →</span>
-    </div>
-    <div id="feedList" class="feed-list">
-      <!-- Feed items rendered by JavaScript -->
-      <div class="empty-state">
-        <div class="empty-icon">📭</div>
-        <h3>Chưa có bài viết nào</h3>
-        <p>Bài viết sẽ xuất hiện tại đây sau khi được đăng tải.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- Keep admin zone hidden as per requirements -->
-  <div class="admin-zone" id="adminZone" style="display:none;">
-    <div class="admin-zone-title">
-      ✏️ Quản lý tin tức
-      <span class="az-badge">Admin</span>
-    </div>
-    <form class="admin-form" id="adminForm" onsubmit="savePost(event)">
-      <input type="hidden" id="editId" value="">
-      <div class="full-width">
-        <label for="postTitle">Tiêu đề</label>
-        <input type="text" id="postTitle" required placeholder="Nhập tiêu đề bài viết...">
-      </div>
-      <div>
-        <label for="postCategory">Danh mục</label>
-        <select id="postCategory">
-          <option value="thongbao">📢 Thông báo</option>
-          <option value="sukien">📅 Sự kiện</option>
-          <option value="tintuc">📰 Tin tức</option>
-          <option value="hoclieu">📚 Học liệu</option>
-        </select>
-      </div>
-      <div>
-        <label for="postUrgency">Mức độ</label>
-        <select id="postUrgency">
-          <option value="normal">Thường</option>
-          <option value="important">Quan trọng</option>
-          <option value="urgent">Khẩn</option>
-        </select>
-      </div>
-      <div>
-        <label for="postDate">Ngày đăng</label>
-        <input type="date" id="postDate" required>
-      </div>
-      <div>
-        <label for="postImage">Ảnh đại diện (URL)</label>
-        <input type="url" id="postImage" placeholder="https://... (không bắt buộc)">
-      </div>
-      <div class="full-width">
-        <label for="postDesc">Mô tả ngắn</label>
-        <input type="text" id="postDesc" placeholder="Tóm tắt nội dung bài viết...">
-      </div>
-      <div class="full-width">
-        <label for="postContent">Nội dung chi tiết</label>
-        <textarea id="postContent" rows="4" placeholder="Viết nội dung bài viết tại đây..."></textarea>
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="btn-save" id="btnSave">📌 Đăng bài</button>
-        <button type="button" class="btn-preview" onclick="previewPost()">👁️ Xem trước</button>
-        <button type="button" class="btn-cancel" style="margin-left:auto" onclick="resetForm()">🔄 Làm mới</button>
-      </div>
-    </form>
-  </div>
-
-</main>
-
-<!-- ═══ DETAIL MODAL ═══ -->
+<!-- ═══════ MODAL ═══════ -->
 <div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeModal()">
   <div class="modal-content">
     <div class="modal-header">
-      <h2 id="modalTitle">Bài viết</h2>
+      <h2 id="modalTitle">Chi tiết</h2>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-body" id="modalBody">
+    <div class="modal-body">
       <div class="modal-meta" id="modalMeta"></div>
-      <div class="modal-text" id="modalText"></div>
+      <div id="modalContent"></div>
     </div>
   </div>
 </div>
 
-<script>
+<script>// ══════════════════════════════════════════════════
+// DATA — loaded from API
 // ══════════════════════════════════════════════════
-// DATA LAYER — lưu trữ bài viết
-// ══════════════════════════════════════════════════
-let posts = [];
+const API_URL = 'https://script.google.com/macros/s/AKfycbwATb1bXAK7sVmrAoW9J8tmEZnAB_JxMo82hVjnJ9aovpS4-mgryPwQzql9jRfrT4hsBA/exec';
 
-// Load từ localStorage
-try {
-  const saved = localStorage.getItem('hocmai_feed_posts');
-  if (saved) posts = JSON.parse(saved);
-} catch(e) {}
+const SO_TAY_LABELS = [
+  'Nội quy lớp học',
+  'HD học livestream',
+  'Lịch học',
+  'Hỏi đáp iChat',
+  'Nhận sách TopUni',
+  'Báo cáo học tập'
+];
+
+const SO_TAY_ICONS = ['📋','🎥','📅','❓','📦','📊'];
+
+const EXAM_MAP = {
+  'All': 'all',
+  'HSA': 'hsa',
+  'QDA': 'qda',
+  'TSA': 'tsa',
+  'V-ACT': 'vact',
+  'TN THPT': 'tnthpt',
+  'ĐGNL': 'dgnl'
+};
+
+const FEED_ICON_MAP = {
+  'Quan trọng': {icon:'🔔', type:'class'},
+  'Quan trong': {icon:'🔔', type:'class'},
+  'Cần biết': {icon:'📄', type:'lesson'},
+  'Can biet': {icon:'📄', type:'lesson'},
+  'Khẩn cấp': {icon:'⚠️', type:'event'},
+  'Khan cap': {icon:'⚠️', type:'event'},
+  '': {icon:'📢', type:'system'}
+};
+
+const FEED_BADGE_STYLE = {
+  'Quan trọng': 'hot',
+  'Cần biết': 'new',
+  'Khẩn cấp': 'urgent'
+};
+
+let allScheduleData = [];
+let allFeedData = [];
+let allSoTayLinks = [];
+let currentExamFilter = 'all';
+let scheduleExpanded = false;
+const SCHEDULE_MAX_PREVIEW = 3;
 
 // ══════════════════════════════════════════════════
-// SAMPLE DATA — demo for hot news & notebook
+// FETCH API DATA
 // ══════════════════════════════════════════════════
-if(posts.length === 0){
-  posts = [
-    {
-      id:'hn1', title:'Lịch học trực tuyến lớp 10A1 — Thay đổi giờ học tuần này',
-      category:'thongbao', urgency:'urgent', date:'2025-07-15',
-      desc:'Tất cả học sinh lớp 10A1 vui lòng chú ý thay đổi giờ học từ 19h lên 18h30.',
-      content:'Tất cả học sinh lớp 10A1 vui lòng chú ý thay đổi giờ học:\n\n📅 Thời gian: 18h30 - 20h30\n📝 Môn: Toán\n👩‍🏫 Giáo viên: Cô Nguyễn Thị A\n\nLý do: Giáo viên có lịch họp toàn trường. Mong học sinh thông cảm và đến đúng giờ.',
-      image:'', views:42, createdAt:'2025-07-15T08:00:00Z'
-    },
-    {
-      id:'hn2', title:'Kết quả thi cuối kỳ Toán lớp 10 — Kết quả đã có!',
-      category:'thongbao', urgency:'important', date:'2025-07-14',
-      desc:'Kết quả thi cuối kỳ đã được công bố. Học sinh vui lòng kiểm tra điểm tại hệ thống.',
-      content:'Kết quả thi cuối kỳ môn Toán lớp 10 đã được công bố!\n\n📊 Điểm trung bình lớp: 7.8/10\n🏆 Cao nhất: 9.5/10\n📉 Thấp nhất: 4.0/10\n\nHọc sinh tra cứu điểm tại hệ thống hoặc liên hệ giáo viên bộ môn.',
-      image:'', views:89, createdAt:'2025-07-14T10:00:00Z'
-    },
-    {
-      id:'hn3', title:'⚠️ Thông báo lịch thi lại — Học sinh cần đăng ký trước 20/07',
-      category:'thongbao', urgency:'urgent', date:'2025-07-13',
-      desc:'Học sinh có nhu cầu thi lại vui lòng đăng ký với giáo viên chủ nhiệm trước ngày 20/07.',
-      content:'⚠️ THÔNG BÁO LỊCH THI LẠI\n\nThời gian thi lại: 25/07/2025\nĐăng ký: Trước 20/07/2025\n\nĐối tượng: Học sinh có điểm thi dưới trung bình\nHồ sơ cần:\n- Đơn đăng ký thi lại\n- Thẻ học sinh\n- Kết quả thi gốc\n\nMọi thắc mắc liên hệ giáo viên chủ nhiệm.',
-      image:'', views:56, createdAt:'2025-07-13T14:00:00Z'
-    },
-    {
-      id:'tn1', title:'Sổ tay học sinh — Mẹo ghi nhớ công thức Toán',
-      category:'hoclieu', urgency:'normal', date:'2025-07-15',
-      desc:'Tổng hợp các mẹo ghi nhớ công thức Toán quan trọng cho học sinh cấp 2 và cấp 3.',
-      content:'📚 SỔ TAY TOÁN — MẸO GHI NHỚ\n\n1️⃣ Phương trình bậc 2:\nax² + bx + c = 0\nΔ = b² - 4ac\n\n2️⃣ Hệ thức lượng:\nsin²α + cos²α = 1\n1 + tan²α = 1/cos²α\n\n3️⃣ Số phức:\ni² = -1\n(a+bi)(a-bi) = a² + b²\n\n4️⃣ Nguyên hàm cơ bản:\n∫xⁿdx = xⁿ⁺¹/(n+1) + C\n∫eˣdx = eˣ + C',
-      image:'', views:33, createdAt:'2025-07-15T12:00:00Z'
-    },
-    {
-      id:'tn2', title:'Sổ tay — Cách ôn tập hiệu quả trước kỳ thi',
-      category:'hoclieu', urgency:'normal', date:'2025-07-12',
-      desc:'Hướng dẫn phương pháp ôn tập khoa học, giúp học sinh nắm vững kiến thức và tự tin đi thi.',
-      content:'📝 SỔ TAY HỌC VIÊN — PHƯƠNG PHÁP ÔN TẬP\n\n✅ Bước 1: Lập danh sách kiến thức cần ôn\n✅ Bước 2: Ôn lý thuyết trước, bài tập sau\n✅ Bước 3: Làm bài tập trắc nghiệm\n✅ Bước 4: Tổng hợp lỗi sai và sửa lại\n✅ Bước 5: Ôn lại vào ngày hôm sau\n\n💡 Mẹo hay:\n- Học từ 45-60 phút rồi nghỉ 10 phút\n- Giải bài tập theo nhóm\n- Hỏi giáo viên ngay khi chưa hiểu',
-      image:'', views:21, createdAt:'2025-07-12T09:00:00Z'
-    },
-    {
-      id:'tn3', title:'Sổ tay — Danh sách từ vựng tiếng Anh quan trọng',
-      category:'hoclieu', urgency:'normal', date:'2025-07-11',
-      desc:'Tổng hợp các từ vựng tiếng Anh thường gặp trong bài thi THPT Quốc gia.',
-      content:'📚 SỔ TAY TIẾNG ANH — TỪ VỰNG QUAN TRỌNG\n\n🔤 Từ vựng chủ đề Giáo dục:\n- Academic (adj): học thuật\n- Curriculum (n): chương trình giảng dạy\n- Enrollment (n): ghi danh\n- Syllabus (n): đề cương\n- Assignment (n): bài tập giao\n- Deadline (n): hạn chót\n\n🔤 Từ vựng chủ đề Công nghệ:\n- Artificial intelligence (n): trí tuệ nhân tạo\n- Algorithm (n): thuật toán\n- Database (n): cơ sở dữ liệu\n- Software (n): phần mềm',
-      image:'', views:18, createdAt:'2025-07-11T15:00:00Z'
+function parseDate(datestr){
+  // Parses ISO "2026-04-03T..." or "m/d/yyyy" or "d/m/yyyy" format
+  if(!datestr) return null;
+  const s = String(datestr);
+  // ISO format (from new API)
+  if(s.includes('T') || s.includes('-')){
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  const parts = s.split('/');
+  if(parts.length !== 3) return null;
+  const m = parseInt(parts[0]), d = parseInt(parts[1]), y = parseInt(parts[2]);
+  if(m > 12) return new Date(y, d-1, m);
+  return new Date(y, m-1, d);
+}
+
+function getExamKey(examStr){
+  if(!examStr) return 'all';
+  const upper = examStr.toUpperCase().trim();
+  if(upper.includes('TN THPT') || upper.includes('TNTHPT')) return 'tnthpt';
+  if(upper.includes('HSA')) return 'hsa';
+  if(upper.includes('QDA')) return 'qda';
+  if(upper.includes('TSA')) return 'tsa';
+  if(upper.includes('V-ACT') || upper.includes('VACT')) return 'vact';
+  return 'all';
+}
+
+function formatDate(d){
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  return `${dd}/${mm}/${d.getFullYear()}`;
+}
+
+async function fetchAPIData(){
+  try {
+    const resp = await fetch(API_URL);
+    const json = await resp.json();
+
+    // === So_tay ===
+    // API returns: row[0]=empty, row[1]=header(TT,Tít,Link), row[2+]=data(key "3"=link)
+    if(json.So_tay && json.So_tay.length > 2){
+      allSoTayLinks = json.So_tay.slice(2).map(function(row){
+        return row['3'] || row['Link'] || '';
+      }).filter(function(u){ return u && u.startsWith('http'); });
     }
-  ];
-  try { localStorage.setItem('hocmai_feed_posts', JSON.stringify(posts)); } catch(e){}
-}
 
-function saveToStorage(){
-  try { localStorage.setItem('hocmai_feed_posts', JSON.stringify(posts)); } catch(e){}
-  updateStats();
+    // === Lich_hoc ===
+    // API returns: row[0]=header names, row[1]=header numbers, row[2+]=data with numeric keys
+    // Key: 1=Môn, 3=Tên bài giảng, 4=Tên GV, 5=Ngày live (ISO), 7=Khung giờ, 32=Kỳ thi/Lớp
+    if(json.Lich_hoc && json.Lich_hoc.length > 2){
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const cutoff = new Date(today);
+      cutoff.setDate(cutoff.getDate() + 2);
+      cutoff.setHours(23,59,59,999);
+
+      const seen = new Set();
+      allScheduleData = [];
+
+      for(let i = 2; i < json.Lich_hoc.length; i++){
+        const row = json.Lich_hoc[i];
+        const bai   = row['Tên bài giảng'] || row['Tên_bài_giảng'] || row['3'] || '';
+        const gv    = row['Tên GV']  || row['Tên_GV']  || row['4'] || '';
+        const ngay  = row['Ngày live'] || row['Ngày_live'] || row['5'] || '';
+        const khung = row['Khung giờ'] || row['Khung_giờ'] || row['7'] || '';
+        const kyThi = row['Kỳ thi/Lớp'] || row['Kỳ_thi/Lớp'] || row['Kỳ thi'] || row['32'] || '';
+
+        if(!bai) continue;
+
+        const date = parseDate(ngay);
+        if(!date || date < today || date > cutoff) continue;
+
+        const key = `${bai}|${gv}|${ngay}`;
+        if(seen.has(key)) continue;
+        seen.add(key);
+
+        const time = khung ? String(khung).split('-')[0].trim() : '';
+
+        allScheduleData.push({
+          date: date.getDate(),
+          month: String(date.getMonth()+1).padStart(2,'0'),
+          time: time,
+          subject: bai,
+          teacher: gv,
+          exam: getExamKey(kyThi),
+          fullDate: formatDate(date)
+        });
+      }
+      allScheduleData.sort((a,b) => {
+        if(a.month !== b.month) return a.month - b.month;
+        return a.date - b.date;
+      });
+    }
+
+    // === Ban_tin ===
+    // API returns: row[0]=empty, row[1]=header (Ngày_đăng,Người_đăng,Tiêu_đề,Nội_dung,
+    //   Ky_thi,Giai_doan,Muc_do), row[2+]=data.
+    // We also support old keys with spaces (Ngày đăng, Tiêu đề, etc.)
+    if(json.Ban_tin && json.Ban_tin.length > 2){
+      allFeedData = [];
+      for(let i = 2; i < json.Ban_tin.length; i++){
+        const row = json.Ban_tin[i];
+        // Support both underscore and space key formats
+        const ngayDang  = row['Ngày_đăng']  || row['Ngày đăng']  || row['1'] || '';
+        const tieuDe    = row['Tiêu_đề']    || row['Tiêu đề']    || row['3'] || '';
+        const noiDung   = row['Nội_dung']   || row['Nội dung']   || row['4'] || '';
+        const kyThi     = row['Ky_thi']     || row['Kỳ thi']     || row['9'] || '';
+        const giaiDoan  = row['Giai_doan']  || row['Giai đoạn']  || row['10'] || '';
+        const mucDo     = row['Muc_do']     || row['Mức độ']     || row['12'] || '';
+
+        // Skip truly empty rows
+        if(!tieuDe && !noiDung) continue;
+
+        // Normalize mucDo
+        const mucDoNorm = mucDo.trim();
+        const iconInfo = FEED_ICON_MAP[mucDoNorm] || FEED_ICON_MAP[''];
+
+        // Format date
+        let timeStr = 'Mới cập nhật';
+        if(ngayDang) {
+          try {
+            const d = new Date(ngayDang);
+            if(!isNaN(d.getTime())) {
+              timeStr = d.toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit', year:'numeric'});
+            } else {
+              timeStr = ngayDang;
+            }
+          } catch(e) { timeStr = ngayDang; }
+        }
+
+        allFeedData.push({
+          id: 'f'+i,
+          icon: iconInfo.icon,
+          iconType: iconInfo.type,
+          title: tieuDe || 'Thông báo',
+          desc: noiDung || '',
+          time: timeStr,
+          badge: mucDoNorm || '',
+          badgeType: FEED_BADGE_STYLE[mucDoNorm] || 'new',
+          category: (kyThi ? kyThi + ' · ' : '') + (giaiDoan || mucDoNorm || 'Thông báo')
+        });
+      }
+    }
+  } catch(e){
+    console.error('API fetch error:', e);
+  }
 }
 
 // ══════════════════════════════════════════════════
-// RENDER TIN NÓNG (Hot News — urgent & important)
+// RENDER
 // ══════════════════════════════════════════════════
-function renderTinNong(){
-  const hotPosts = posts
-    .filter(p => p.urgency === 'urgent' || p.urgency === 'important')
-    .sort((a,b) => {
-      const urgencyOrder = {urgent:0, important:1, normal:2};
-      return (urgencyOrder[a.urgency]||2) - (urgencyOrder[b.urgency]||2);
-    });
-
-  document.getElementById('tinNongCount').textContent = hotPosts.length + ' tin';
-  const container = document.getElementById('tinNongContent');
-
-  if(hotPosts.length === 0){
-    container.innerHTML = `
-      <div class="empty-state" style="padding:30px 20px">
-        <div class="empty-icon">🔥</div>
-        <h3>Chưa có tin nóng</h3>
-        <p>Tin nóng sẽ xuất hiện tại đây.</p>
-      </div>`;
+function renderFeed(){
+  const list = document.getElementById('feedList');
+  if(allFeedData.length === 0){
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:14px">Đang tải dữ liệu...</div>';
     return;
   }
-
-  container.innerHTML = hotPosts.map((p, i) => `
-    <div class="tin-item" onclick="openDetail('${p.id}')">
-      <span class="tin-badge">${i+1}</span>
-      <div class="tin-info">
-        <div class="tin-title">${escapeHtml(p.title)}</div>
-        <div class="tin-meta">
-          <span>📅 ${formatDate(p.date)}</span>
-          <span>👁️ ${p.views}</span>
+  list.innerHTML = allFeedData.map(item => {
+    const badgeHtml = item.badge
+      ? `<span class="feed-badge ${item.badgeType}">${escapeHtml(item.badge)}</span>`
+      : '';
+    // Format desc: trim to first meaningful paragraph, ~200 chars
+    const rawDesc = item.desc || '';
+    const paragraphs = rawDesc.split('\n').filter(function(l){ return l.trim(); });
+    const shortDesc = escapeHtml(paragraphs[0] || '').substring(0, 200);
+    const hasMore = rawDesc.length > 200 || paragraphs.length > 1;
+    return `
+      <div class="feed-card" onclick="openFeedDetail('${item.id}')">
+        <div class="feed-icon ${item.iconType}">${item.icon}</div>
+        <div class="feed-body">
+          <div class="feed-title">${escapeHtml(item.title)}</div>
+          <div class="feed-desc">${shortDesc}${hasMore ? '…' : ''}</div>
+          <div class="feed-meta">
+            <span class="feed-time">🕐 ${item.time}</span>
+            ${badgeHtml}
+            <span class="feed-category">${escapeHtml(item.category)}</span>
+          </div>
         </div>
-      </div>
-      <span class="tin-arrow">›</span>
-    </div>
-  `).join('');
+        <span class="feed-arrow">›</span>
+      </div>`;
+  }).join('');
 }
 
-// ══════════════════════════════════════════════════
-// RENDER SỔ TAY HỌC VIÊN
-// ══════════════════════════════════════════════════
 function renderSoTay(){
-  const notebookPosts = posts.filter(p => p.category === 'hoclieu');
-  document.getElementById('soTayCount').textContent = notebookPosts.length + ' mục';
-  const container = document.getElementById('soTayContent');
-
-  if(notebookPosts.length === 0){
-    container.innerHTML = `
-      <div class="empty-state" style="padding:30px 20px">
-        <div class="empty-icon">📓</div>
-        <h3>Chưa có mục sổ tay</h3>
-        <p>Nội dung sổ tay học viên sẽ xuất hiện tại đây.</p>
-      </div>`;
-    return;
-  }
-
-  container.innerHTML = notebookPosts.map((p, i) => `
-    <div class="tin-item" onclick="openDetail('${p.id}')">
-      <span class="tin-badge so-tay-badge">${i+1}</span>
-      <div class="tin-info">
-        <div class="tin-title">${escapeHtml(p.title)}</div>
-        <div class="tin-meta">
-          <span>📅 ${formatDate(p.date)}</span>
-        </div>
-      </div>
-      <span class="tin-arrow">›</span>
-    </div>
+  const container = document.getElementById('soTayList');
+  const links = allSoTayLinks.length >= 6 ? allSoTayLinks : [];
+  const items = SO_TAY_LABELS.map((label, i) => ({
+    label: label,
+    icon: SO_TAY_ICONS[i],
+    url: links[i] || '#'
+  }));
+  container.innerHTML = items.map(item => `
+    <a href="${escapeHtml(item.url)}" class="link-item" target="_blank" rel="noopener">
+      <span class="li-icon">${item.icon}</span> ${escapeHtml(item.label)}
+    </a>
   `).join('');
 }
 
-// ══════════════════════════════════════════════════
-// RENDER TIN CẬP NHẬT — Notion-style cards
-// ══════════════════════════════════════════════════
-function renderTinCapNhat(){
-  const container = document.getElementById('tinCapNhatContent');
+function renderSchedule(exam){
+  const examType = exam || 'all';
+  const source = allScheduleData.length > 0 ? allScheduleData : [];
+  const filtered = examType === 'all'
+    ? source
+    : source.filter(s => s.exam === examType);
+  const list = document.getElementById('scheduleList');
+  const seeMore = document.getElementById('scheduleSeeMore');
 
-  // Items from Notion page (hardcoded for now, will be dynamic later)
-  const capNhatItems = [
-    {
-      title:'Hướng dẫn tra cứu thông tin vận chuyển sách tổng ôn Toán "1000+ bài toán trọng tâm"',
-      desc:'Kiểm tra lịch giao sách tại khu vực của bạn. Sách sẽ được giao theo đợt trong tháng 07/2025.',
-      icon:'📦',
-      altClass:'',
-      date:'15/07/2025'
-    },
-    {
-      title:'Hướng dẫn đăng ký nhận sách tổng ôn Toán "1000+ bài toán trọng tâm" tại văn phòng',
-      desc:'Đăng ký nhận sách trực tiếp tại văn phòng HOCMAI. Mang theo thẻ học sinh và mã lớp.',
-      icon:'📝',
-      altClass:'alt1',
-      date:'14/07/2025'
-    },
-    {
-      title:'Bắt đầu tại đây: Cách theo dõi thông báo lớp học',
-      desc:'Hướng dẫn cách nhận thông báo lớp học, lịch học và các tin tức quan trọng từ HOCMAI.',
-      icon:'📌',
-      altClass:'alt2',
-      date:'12/07/2025'
-    },
-    {
-      title:'Lịch học tuần mới — Cập nhật lịch trực tuyến mới nhất',
-      desc:'Thay đổi giờ học một số lớp. Học sinh kiểm tra lịch mới tại trang thông tin lớp học.',
-      icon:'📅',
-      altClass:'alt3',
-      date:'11/07/2025'
-    },
-    {
-      title:'Chương trình thi thử THPT Quốc gia — Đăng ký tham gia',
-      desc:'Kỳ thi thử trực tuyến miễn phí cho học sinh lớp 12. Thời gian thi: 20/07/2025.',
-      icon:'✍️',
-      altClass:'alt4',
-      date:'10/07/2025'
-    },
-    {
-      title:'Ưu đãi học phí hè — Giảm 30% khi đăng ký sớm',
-      desc:'Chương trình ưu đãi học phí hè áp dụng cho tất cả học sinh đăng ký trước 25/07/2025.',
-      icon:'🎉',
-      altClass:'',
-      date:'09/07/2025'
+  if(source.length === 0){
+    list.innerHTML = '<div style="padding:16px 20px;text-align:center;color:var(--text-muted);font-size:13px">Đang tải dữ liệu...</div>';
+    if(seeMore) seeMore.style.display = 'none';
+    return;
+  }
+
+  const visible = scheduleExpanded
+    ? filtered
+    : filtered.slice(0, SCHEDULE_MAX_PREVIEW);
+  const hasMore = filtered.length > SCHEDULE_MAX_PREVIEW;
+
+  list.innerHTML = filtered.length === 0
+    ? '<div style="padding:16px 20px;text-align:center;color:var(--text-muted);font-size:13px">Không có lịch học phù hợp</div>'
+    : visible.map(item => `
+    <div class="class-card" onclick="openScheduleDetail('${escapeHtml(item.subject)}','${escapeHtml(item.teacher)}','${item.date}','${item.month}','${item.time}')">
+      <div class="class-date">
+        <div class="cd-day">${item.date}</div>
+        <div class="cd-month">Thg ${item.month}</div>
+        <div class="cd-time">${item.time}</div>
+      </div>
+      <div class="class-info">
+        <div class="ci-subject">${escapeHtml(item.subject)}</div>
+        <div class="ci-teacher">${escapeHtml(item.teacher)}</div>
+      </div>
+      <span class="class-arrow">›</span>
+    </div>
+  `).join('');
+
+  if(seeMore){
+    if(hasMore){
+      seeMore.style.display = 'block';
+      document.getElementById('seeMoreArrow').textContent = scheduleExpanded ? '▴' : '▾';
+      seeMore.querySelector('.view-link').innerHTML = scheduleExpanded
+        ? 'Thu gọn <span id="seeMoreArrow">▴</span>'
+        : 'Xem thêm <span id="seeMoreArrow">▾</span>';
+    } else {
+      seeMore.style.display = 'none';
     }
-  ];
+  }
+}
 
-  document.getElementById('tinCapNhatCount').textContent = capNhatItems.length + ' bài viết';
+function toggleScheduleExpand(){
+  scheduleExpanded = !scheduleExpanded;
+  renderSchedule(currentExamFilter);
+}
 
-  container.innerHTML = `
-    <div class="cap-nhat-grid">
-      ${capNhatItems.map(item => `
-        <div class="cap-nhat-card" onclick="openCapNhatDetail('${escapeHtml(item.title)}','${escapeHtml(item.desc)}','${escapeHtml(item.date)}')">
-          <div class="card-cover ${item.altClass}">
-            <span>${item.icon}</span>
-          </div>
-          <div class="card-body">
-            <h4>${escapeHtml(item.title)}</h4>
-            <p>${escapeHtml(item.desc)}</p>
-          </div>
-          <div class="card-footer">
-            <span>📅 ${item.date}</span>
-          </div>
-        </div>
-      `).join('')}
-    </div>`;
+function filterExam(exam){
+  currentExamFilter = exam;
+  scheduleExpanded = false;
+  document.querySelectorAll('#examFilters .exam-filter').forEach(btn => {
+    if(btn.dataset.exam === exam){
+      btn.style.background = 'var(--primary)';
+      btn.style.color = '#fff';
+    } else {
+      btn.style.background = 'var(--white)';
+      btn.style.color = 'var(--text-secondary)';
+    }
+  });
+  renderSchedule(exam);
 }
 
 // ══════════════════════════════════════════════════
-// DETAIL MODAL — Tin Nóng & Sổ Tay
+// DETAIL
 // ══════════════════════════════════════════════════
-function openDetail(id){
-  const p = posts.find(x => x.id === id);
-  if(!p) return;
-  p.views++;
-  saveToStorage();
-
-  const catLabel = {thongbao:'📢 Thông báo',sukien:'📅 Sự kiện',tintuc:'📰 Tin tức',hoclieu:'📚 Học liệu'}[p.category]||p.category;
-  const urgLabel = p.urgency === 'urgent' ? '🔥 Khẩn' : p.urgency === 'important' ? '⚡ Quan trọng' : '📌 Thường';
-
-  document.getElementById('modalTitle').textContent = p.title;
+function openFeedDetail(id){
+  const item = allFeedData.find(x => x.id === id);
+  if(!item) return;
+  document.getElementById('modalTitle').textContent = item.title;
+  const badgeHtmlModal = item.badge
+    ? `<span class="feed-badge ${item.badgeType}" style="font-size:11px">${escapeHtml(item.badge)}</span>`
+    : '';
   document.getElementById('modalMeta').innerHTML = `
-    <span>📅 ${formatDate(p.date)}</span>
-    <span>${catLabel}</span>
-    <span>🏷️ ${urgLabel}</span>
-    <span>👁️ ${p.views} lượt xem</span>
+    <span>🕐 ${escapeHtml(item.time)}</span>
+    <span>📁 ${escapeHtml(item.category)}</span>
+    ${badgeHtmlModal}
   `;
-  document.getElementById('modalText').textContent = p.content || p.desc || 'Không có nội dung chi tiết.';
+  // Format content: paragraphs separated by newlines → <p>
+  const formatted = escapeHtml(item.desc || '')
+    .split('\n')
+    .filter(function(l){ return l.trim(); })
+    .map(function(l){ return '<p style="margin:0 0 10px">' + l + '</p>'; })
+    .join('');
+  document.getElementById('modalContent').innerHTML = formatted;
   document.getElementById('detailModal').classList.add('show');
-  document.body.style.overflow = 'hidden';
+}
 
-  renderTinNong();
-  renderSoTay();
+function openScheduleDetail(subject, teacher, date, month, time){
+  document.getElementById('modalTitle').textContent = 'Chi tiết buổi học';
+  document.getElementById('modalMeta').innerHTML = `
+    <span>📅 ${date}/${month}</span>
+    <span>⏰ ${time}</span>
+  `;
+  document.getElementById('modalContent').innerHTML = `
+    <p style="font-size:15px;font-weight:600;margin-bottom:8px">${escapeHtml(subject)}</p>
+    <p style="font-size:14px;color:var(--text-secondary)">👨‍🏫 ${escapeHtml(teacher)}</p>
+  `;
+  document.getElementById('detailModal').classList.add('show');
 }
 
 function closeModal(){
   document.getElementById('detailModal').classList.remove('show');
-  document.body.style.overflow = '';
 }
 
 // ══════════════════════════════════════════════════
-// DETAIL MODAL — Tin Cập Nhật (Notion cards)
+// ACTIONS
 // ══════════════════════════════════════════════════
-function openCapNhatDetail(title, desc, date){
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalMeta').innerHTML = `
-    <span>📅 ${date}</span>
-    <span>📰 Tin cập nhật</span>
-  `;
-  document.getElementById('modalText').textContent = desc;
-  document.getElementById('detailModal').classList.add('show');
-  document.body.style.overflow = 'hidden';
-}
+function openBannerLink(){ if(allFeedData[0]) openFeedDetail(allFeedData[0].id); }
+function viewAllNotif(){ if(allFeedData[0]) openFeedDetail(allFeedData[0].id); }
+function viewAllSchedule(){ if(allScheduleData[0]){
+  const s = allScheduleData[0];
+  openScheduleDetail(s.subject, s.teacher, s.date, s.month, s.time);
+}}
+function openNotif(){ if(allFeedData[0]) openFeedDetail(allFeedData[0].id); }
 
 // ══════════════════════════════════════════════════
 // UTILS
@@ -1569,37 +1364,23 @@ function escapeHtml(str){
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function formatDate(dateStr){
-  if(!dateStr) return '';
-  const d = new Date(dateStr + 'T00:00:00');
-  const day = String(d.getDate()).padStart(2,'0');
-  const month = String(d.getMonth()+1).padStart(2,'0');
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
-}
-
-function updateStats(){
-  const total = posts.reduce((sum,p) => sum + (p.views||0), 0);
-  const totalEl = document.getElementById('totalViews');
-  if(totalEl) totalEl.textContent = total;
-}
-
 // ══════════════════════════════════════════════════
-// INIT — Render all 3 blocks
+// INIT
 // ══════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', ()=>{
-  renderTinNong();
+document.addEventListener('DOMContentLoaded', async () => {
+  // Show loading state
+  renderFeed();
+  renderSchedule('all');
+
+  // Fetch real data
+  await fetchAPIData();
+
+  // Re-render with real data
+  renderFeed();
   renderSoTay();
-  renderTinCapNhat();
-});
-
-// Keyboard shortcut: Ctrl+K => search
-document.addEventListener('keydown', e => {
-  if(e.ctrlKey && e.key === 'k'){
-    e.preventDefault();
-    document.getElementById('searchInput').focus();
-  }
+  renderSchedule(currentExamFilter);
 });
 </script>
+
 </body>
 </html>
