@@ -1013,7 +1013,7 @@ img{max-width:100%;height:auto;display:block}
 <script>// ══════════════════════════════════════════════════
 // DATA — loaded from API
 // ══════════════════════════════════════════════════
-const API_URL = 'https://script.google.com/macros/s/AKfycbz3LU-8fZN7IPafee2qWUN7xj0uSUc499umYbOjTvoK_0oayxIK5e-hP69RMWBmhlTJHA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyD_8ukpf3kUl8a1CKjILRthSX7xwUUzApq-l3PWRR4w8VnDimVFfARzH_Ag_2Nz2rm/exec';
 
 const SO_TAY_LABELS = [
   'Nội quy lớp học',
@@ -1168,7 +1168,14 @@ async function fetchAPIData(){
 
       const seen = new Set();
       allScheduleData = [];
-      const start = getDataStart(json.Lich_hoc);
+      let start = getDataStart(json.Lich_hoc);
+      // Lich_hoc has a 2nd header row with numeric column mapping (e.g. Tên bài giảng = 3).
+      // Detect and skip it if present.
+      if (start < json.Lich_hoc.length) {
+        const r0 = json.Lich_hoc[start];
+        const testVal = r0['Tên bài giảng'] || r0['3'];
+        if (testVal === 3 || testVal === '3') start = start + 1;
+      }
 
       for(let i = start; i < json.Lich_hoc.length; i++){
         const row = json.Lich_hoc[i];

@@ -90,7 +90,7 @@ function readBanTin() {
     if (isEmpty) continue;
 
     var obj = {};
-    var richRowIdx = i - headerRowIdx - 1; // 0-based index trong richTextValues (chỉ data rows)
+    var richRowIdx = i - headerRowIdx; // richColX[0]=header row, richColX[1]=1st data row, ...
     for (var c = 0; c < headers.length; c++) {
       var key = String(headers[c]).trim();
       if (!key) key = String(c + 1);
