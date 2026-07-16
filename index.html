@@ -1018,13 +1018,12 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwATb1bXAK7sVmrAoW9J8tm
 const SO_TAY_LABELS = [
   'Nội quy lớp học',
   'HD học livestream',
-  'Lịch học',
   'Hỏi đáp iChat',
   'Nhận sách TopUni',
   'Báo cáo học tập'
 ];
 
-const SO_TAY_ICONS = ['📋','🎥','📅','❓','📦','📊'];
+const SO_TAY_ICONS = ['📋','🎥','❓','📦','📊'];
 
 const EXAM_MAP = {
   'All': 'all',
@@ -1310,7 +1309,7 @@ function renderFeed(){
 
 function renderSoTay(){
   const container = document.getElementById('soTayList');
-  const links = allSoTayLinks.length >= 6 ? allSoTayLinks : [];
+  const links = allSoTayLinks.length >= 5 ? allSoTayLinks : [];
   const items = SO_TAY_LABELS.map((label, i) => ({
     label: label,
     icon: SO_TAY_ICONS[i],
