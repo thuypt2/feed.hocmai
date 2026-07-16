@@ -1136,13 +1136,25 @@ function stripHtml(html){
   return div.textContent || div.innerText || '';
 }
 
-// Auto-detect data start offset: old API has empty-key header row at [0] + real header at [1]
-// new API has proper named-key header at [0], data starts at [1]
-function getDataStart(arr) {
+// Auto-detect data start offset and skip duplicate header artifacts
+function getDataStart(arr, section) {
   if (!arr || arr.length < 2) return 1;
   // Old format: row[1] has empty string key ""
   if (arr[1] && arr[1].hasOwnProperty('')) return 2;
-  return 1;
+
+  // Skip rows where data values match the header row (duplicate header artifact from wrong rich text offset)
+  var start = 1;
+  while (start < arr.length) {
+    var row = arr[start];
+    var titleVal = row['Tiêu_đề'] || row['Tiêu đề'] || row['Tên bài giảng'] || null;
+    var headerTitle = arr[0]['Tiêu_đề'] || arr[0]['Tiêu đề'] || arr[0]['Tên bài giảng'] || '';
+    if (!titleVal) break;
+    // Strip HTML tags and compare
+    var clean = String(titleVal).replace(/<[^>]*>/g, '').trim();
+    if (clean !== headerTitle) break;
+    start++;
+  }
+  return start;
 }
 
 async function fetchAPIData(){
