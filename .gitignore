@@ -1,0 +1,4 @@
+node_modules
+.env
+.hermes-tmp.*
+.DS_Store
