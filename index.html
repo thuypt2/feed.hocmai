@@ -339,12 +339,19 @@ img{max-width:100%;height:auto;display:block}
 .feed-card:hover{background:var(--primary-50)}
 .feed-icon{
   width:44px;height:44px;
-  border-radius:var(--radius-sm);
+  border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:20px;
   flex-shrink:0;
+  overflow:hidden;
+  background:#f3f4f6;
+}
+.feed-icon img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
 }
 .feed-icon.schedule{background:var(--primary-light);color:var(--primary)}
 .feed-icon.lesson{background:var(--green-light);color:var(--green)}
@@ -366,9 +373,9 @@ img{max-width:100%;height:auto;display:block}
 .feed-body .feed-desc{
   font-size:13px;
   color:var(--text-secondary);
-  line-height:1.5;
+  line-height:1.4;
   display:-webkit-box;
-  -webkit-line-clamp:2;
+  -webkit-line-clamp:1;
   -webkit-box-orient:vertical;
   overflow:hidden;
 }
@@ -1018,6 +1025,7 @@ const FEED_BADGE_STYLE = {
 let allScheduleData = [];
 let allFeedData = [];
 let allSoTayLinks = [];
+let _indexIconMap = {}; // Loai_TB -> icon URL
 let currentExamFilter = 'all';
 let scheduleExpanded = false;
 let feedDataReady = false;
@@ -1209,6 +1217,7 @@ async function fetchAPIData(){
         const kyThi     = row['Ky_thi']     || row['Kỳ thi']     || row['9'] || '';
         const giaiDoan  = row['Giai_doan']  || row['Giai đoạn']  || row['10'] || '';
         const mucDo     = row['Muc_do']     || row['Mức độ']     || row['12'] || '';
+        const loaiTB    = row['Loai_TB']    || row['Loại TB']    || row['8']  || '';
 
         // Skip truly empty rows
         if(!tieuDe && !noiDung) continue;
@@ -1221,7 +1230,12 @@ async function fetchAPIData(){
           mucDoNorm === 'Khan cap' || mucDoNorm === 'Khẩn' ? 'Khẩn cấp' :
           mucDoNorm
         );
-        const iconInfo = FEED_ICON_MAP[mucDoKey] || FEED_ICON_MAP[mucDoNorm] || FEED_ICON_MAP[''];
+        // Prefer icon from _index sheet (column H) matched by Loai_TB (column B)
+        let icon = _indexIconMap[loaiTB] || '';
+        let iconType = icon ? 'custom' : (FEED_ICON_MAP[mucDoKey] || FEED_ICON_MAP[mucDoNorm] || FEED_ICON_MAP['']).type;
+        if (!icon) {
+          icon = (FEED_ICON_MAP[mucDoKey] || FEED_ICON_MAP[mucDoNorm] || FEED_ICON_MAP['']).icon;
+        }
 
         // Format date
         let timeStr = 'Mới cập nhật';
@@ -1240,8 +1254,8 @@ async function fetchAPIData(){
 
         allFeedData.push({
           id: 'f'+i,
-          icon: iconInfo.icon,
-          iconType: iconInfo.type,
+          icon: icon,
+          iconType: iconType,
           title: tieuDe || 'Thông báo',
           desc: noiDung || '',
           time: timeStr,
@@ -1288,7 +1302,7 @@ function renderFeed(){
     // Strip HTML + remove image URLs for card preview
     var plainDesc = stripHtml(rawDesc);
     plainDesc = plainDesc.replace(/(https?:\/\/\S+\.(?:jpg|jpeg|png|gif|webp|svg|bmp)(?:\?\S*)?)/gi, '[Hình ảnh]');
-    var shortDesc = escapeHtml(plainDesc).substring(0, 200);
+    var shortDesc = escapeHtml(plainDesc).substring(0, 140);
     var hasMore = plainDesc.length > 200 || (rawDesc !== plainDesc);
     var plainTitle = stripHtml(item.title || 'Thông báo').replace(/\s+/g, ' ').trim();
     return '\n      <div class="feed-card" onclick="openFeedDetail(\'' + item.id + '\')">' +
