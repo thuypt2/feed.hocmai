@@ -1148,6 +1148,19 @@ async function fetchAPIData(){
       }).filter(function(u){ return u && u.startsWith('http'); });
     }
 
+    // === _index (icon map) ===
+    _indexIconMap = {};
+    if(json._index && Array.isArray(json._index)){
+      for(var j = 0; j < json._index.length; j++){
+        var r = json._index[j];
+        var loai = (r.Loai_TB || '').trim();
+        var iconUrl = (r.icon || '').trim();
+        if(loai && iconUrl){
+          _indexIconMap[loai] = iconUrl;
+        }
+      }
+    }
+
     // === Lich_hoc ===
     if(json.Lich_hoc && json.Lich_hoc.length > 1){
       const today = new Date();
