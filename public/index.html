@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bản tin TopUni - HOCMAI</title>
+  <link rel="icon" type="image/png" href="Favicon HOCMAI.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════ RESET & VARIABLES ═══════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#005BAC;
+  --primary-dark:#004a8f;
+  --primary-light:#e8f2fd;
+  --primary-50:#f0f7ff;
+  --accent:#FF8A00;
+  --accent-light:#fff3e0;
+  --text:#1a1a2e;
+  --text-secondary:#5f6368;
+  --text-muted:#8e9198;
+  --bg:#f5f7fa;
+  --white:#fff;
+  --line:#e2e6ee;
+  --line-light:#f0f2f5;
+  --green:#2e7d32;
+  --green-light:#e8f5e9;
+  --red:#e53935;
+  --red-light:#fce4ec;
+  --purple:#6a1b9a;
+  --purple-light:#f3e5f5;
+  --teal:#00897b;
+  --teal-light:#e0f2f1;
+  --orange:#f57c00;
+  --orange-light:#fff3e0;
+  --radius:16px;
+  --radius-sm:10px;
+  --radius-xs:6px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06);
+  --shadow-md:0 4px 16px rgba(0,91,172,.08);
+  --shadow-lg:0 8px 30px rgba(0,0,0,.1);
+  --shadow-card:0 2px 8px rgba(0,0,0,.04);
+  --transition:.25s cubic-bezier(.4,0,.2,1);
+  --font:'Be Vietnam Pro',-apple-system,BlinkMacSystemFont,sans-serif;
+  --header-h:64px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  font-size:15px;
+  line-height:1.6;
+  color:var(--text);
+  background:var(--bg);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--primary);text-decoration:none;transition:color var(--transition)}
+a:hover{color:var(--primary-dark)}
+img{max-width:100%;height:auto;display:block}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+
+/* ═══════════════════════════ HEADER ═══════════════════════════ */
+.header{
+  position:fixed;
+  top:0;left:0;right:0;
+  height:var(--header-h);
+  background:var(--white);
+  border-bottom:1px solid var(--line-light);
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  padding:0 24px 0 20px;
+}
+.header-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  width:100%;
+  max-width:1440px;
+  margin:0 auto;
+}
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+}
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+}
+.logo-icon{
+  width:36px;height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.logo-icon img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+.header-nav-link{
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-secondary);
+  text-decoration:none;
+  padding:6px 0;
+  transition:all var(--transition);
+  white-space:nowrap;
+  position:relative;
+}
+.header-nav-link:hover{color:var(--primary)}
+.header-nav-link.active{
+  color:var(--primary);
+}
+.header-nav-link.active::after{
+  content:'';
+  position:absolute;
+  bottom:-2px;left:0;right:0;
+  height:2px;
+  background:var(--primary);
+  border-radius:1px;
+}
+
+/* ═══════════════════════════ LAYOUT ═══════════════════════════ */
+.layout{
+  display:flex;
+  max-width:1440px;
+  margin:0 auto;
+  padding-top:var(--header-h);
+  min-height:100vh;
+}
+
+/* ═══════════════════════════ MAIN CONTENT ═══════════════════════════ */
+.content{
+  flex:1;
+  min-width:0;
+  padding:24px 28px 100px;
+}
+.content-grid{
+  display:grid;
+  grid-template-columns: 1fr 360px;
+  gap:28px;
+  align-items:start;
+}
+
+/* ═══════════════════════════ BANNER ═══════════════════════════ */
+.banner-section{
+  grid-column:1/-1;
+  margin-bottom:4px;
+}
+.banner-slider{
+  position:relative;
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:linear-gradient(135deg,#001a4d 0%,var(--primary) 50%,#0088cc 100%);
+  color:#fff;
+  min-height:200px;
+  display:flex;
+  align-items:center;
+}
+.banner-slide{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:36px 40px;
+  width:100%;
+}
+.banner-text{flex:1;max-width:520px}
+.banner-text .b-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:4px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.15);
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-bottom:12px;
+}
+.banner-text h2{
+  font-size:26px;
+  font-weight:800;
+  line-height:1.3;
+  margin-bottom:10px;
+}
+.banner-text p{
+  font-size:14px;
+  opacity:.85;
+  line-height:1.5;
+  margin-bottom:18px;
+}
+.banner-cta{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:10px 24px;
+  border-radius:var(--radius-sm);
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  font-size:14px;
+  border:none;
+  cursor:pointer;
+  transition:all var(--transition);
+}
+.banner-cta:hover{background:#e67800;transform:translateY(-1px)}
+.banner-illustration{
+  flex-shrink:0;
+  width:200px;height:160px;
+  background:rgba(255,255,255,.08);
+  border-radius:var(--radius);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:64px;
+  margin-left:24px;
+}
+.banner-dots{
+  position:absolute;
+  bottom:16px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:8px;
+}
+.banner-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:rgba(255,255,255,.35);
+  cursor:pointer;
+  transition:all var(--transition);
+  border:none;
+}
+.banner-dot.active{width:24px;border-radius:4px;background:#fff}
+.banner-arrows{
+  position:absolute;
+  top:50%;left:12px;right:12px;
+  transform:translateY(-50%);
+  display:flex;
+  justify-content:space-between;
+  pointer-events:none;
+}
+.banner-arrow{
+  width:36px;height:36px;
+  border-radius:50%;
+  background:rgba(255,255,255,.2);
+  border:none;
+  color:#fff;
+  font-size:16px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:all;
+  transition:all var(--transition);
+  backdrop-filter:blur(4px);
+}
+.banner-arrow:hover{background:rgba(255,255,255,.4)}
+
+/* ═══════════════════════════ LEFT COL — FEED ═══════════════════════════ */
+.feed-section{
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--line-light);
+  overflow:hidden;
+}
+.feed-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 24px 14px;
+  border-bottom:1px solid var(--line-light);
+}
+.feed-header h2{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.feed-header .view-all{
+  font-size:13px;
+  font-weight:600;
+  color:var(--primary);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  transition:gap var(--transition);
+}
+.feed-header .view-all:hover{gap:8px}
+.feed-list{
+  padding:8px 0;
+}
+.feed-card{
+  display:flex;
+  gap:14px;
+  padding:16px 24px;
+  cursor:pointer;
+  transition:all var(--transition);
+  border-bottom:1px solid var(--line-light);
+  position:relative;
+}
+.feed-card:last-child{border-bottom:none}
+.feed-card:hover{background:var(--primary-50)}
+.feed-icon{
+  width:44px;height:44px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  flex-shrink:0;
+  overflow:hidden;
+  background:#f3f4f6;
+}
+.feed-icon img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+}
+.feed-icon.schedule{background:var(--primary-light);color:var(--primary)}
+.feed-icon.lesson{background:var(--green-light);color:var(--green)}
+.feed-icon.exam{background:var(--purple-light);color:var(--purple)}
+.feed-icon.result{background:var(--accent-light);color:var(--accent)}
+.feed-icon.class{background:var(--teal-light);color:var(--teal)}
+.feed-icon.system{background:#f3f4f6;color:var(--text-secondary)}
+.feed-icon.event{background:var(--red-light);color:var(--red)}
+.feed-icon.promo{background:var(--orange-light);color:var(--orange)}
+.feed-body{flex:1;min-width:0}
+.feed-body .feed-title{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  line-height:1.4;
+  margin-bottom:4px;
+}
+.feed-card:hover .feed-title{color:var(--primary)}
+.feed-body .feed-desc{
+  font-size:13px;
+  color:var(--text-secondary);
+  line-height:1.4;
+  display:-webkit-box;
+  -webkit-line-clamp:1;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.feed-meta{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:8px;
+  flex-wrap:wrap;
+}
+.feed-time{
+  font-size:12px;
+  color:var(--text-muted);
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+.feed-badge{
+  font-size:10px;
+  font-weight:700;
+  padding:2px 8px;
+  border-radius:999px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+.feed-badge.new{background:var(--green-light);color:var(--green)}
+.feed-badge.hot{background:var(--red-light);color:var(--red)}
+.feed-badge.urgent{background:var(--accent-light);color:var(--accent)}
+.feed-category{
+  font-size:10px;
+  font-weight:600;
+  color:var(--text-muted);
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+.feed-arrow{
+  color:var(--line);
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  flex-shrink:0;
+  transition:all var(--transition);
+}
+.feed-card:hover .feed-arrow{color:var(--primary);transform:translateX(4px)}
+.feed-link-copy{
+  color:var(--text-muted);
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  flex-shrink:0;
+  padding:4px;
+  border-radius:4px;
+  cursor:pointer;
+  transition:all var(--transition);
+  opacity:0;
+}
+.feed-card:hover .feed-link-copy{opacity:1}
+.feed-link-copy:hover{background:var(--primary-light);color:var(--primary)}
+
+/* ═══════════════════════════ RIGHT COL ═══════════════════════════ */
+.right-col{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+/* Quick Access */
+.quick-section{
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--line-light);
+  overflow:hidden;
+}
+.section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 20px 12px;
+  border-bottom:1px solid var(--line-light);
+}
+.section-header h3{
+  font-size:15px;
+  font-weight:700;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.section-header .view-link{
+  font-size:12px;
+  font-weight:600;
+  color:var(--primary);
+  cursor:pointer;
+}
+.quick-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:12px 16px 16px;
+}
+.quick-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  padding:14px 8px;
+  border-radius:var(--radius-sm);
+  background:var(--bg);
+  cursor:pointer;
+  transition:all var(--transition);
+  text-decoration:none;
+  color:var(--text);
+}
+.quick-item:hover{
+  background:var(--primary-light);
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-sm);
+}
+.quick-item .qi-icon{
+  font-size:24px;
+  width:40px;height:40px;
+  border-radius:var(--radius-sm);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.quick-item .qi-icon.purple{background:var(--purple-light);color:var(--purple)}
+.quick-item .qi-icon.green{background:var(--green-light);color:var(--green)}
+.quick-item .qi-icon.blue{background:var(--primary-light);color:var(--primary)}
+.quick-item .qi-icon.orange{background:var(--accent-light);color:var(--accent)}
+.quick-item .qi-icon.teal{background:var(--teal-light);color:var(--teal)}
+.quick-item .qi-icon.pink{background:#fce4ec;color:#e91e63}
+.quick-item span{
+  font-size:12px;
+  font-weight:500;
+  text-align:center;
+  line-height:1.3;
+}
+
+/* Upcoming Classes */
+.class-card{
+  padding:14px 20px;
+  border-bottom:1px solid var(--line-light);
+  cursor:pointer;
+  transition:all var(--transition);
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+.class-card:last-child{border-bottom:none}
+.class-card:hover{background:var(--primary-50)}
+.class-date{
+  width:50px;
+  text-align:center;
+  flex-shrink:0;
+}
+.class-date .cd-day{
+  font-size:20px;
+  font-weight:800;
+  color:var(--primary);
+  line-height:1;
+}
+.class-date .cd-month{
+  font-size:10px;
+  font-weight:600;
+  color:var(--text-muted);
+  text-transform:uppercase;
+}
+.class-date .cd-time{
+  font-size:10px;
+  font-weight:600;
+  color:var(--accent);
+  margin-top:2px;
+}
+.class-info{flex:1;min-width:0}
+.class-info .ci-subject{
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+  line-height:1.3;
+  margin-bottom:2px;
+}
+.class-info .ci-teacher{
+  font-size:12px;
+  color:var(--text-muted);
+}
+.class-arrow{
+  color:var(--line);
+  font-size:16px;
+  transition:all var(--transition);
+}
+.class-card:hover .class-arrow{color:var(--primary);transform:translateX(3px)}
+
+/* Fixed links */
+.links-list{
+  padding:8px 4px;
+}
+.link-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 16px;
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  transition:all var(--transition);
+  font-size:13px;
+  font-weight:500;
+  color:var(--text-secondary);
+  text-decoration:none;
+}
+.link-item:hover{
+  background:var(--primary-light);
+  color:var(--primary);
+}
+.link-item .li-icon{
+  font-size:16px;
+  width:20px;
+  text-align:center;
+}
+
+/* Achievement */
+.achievement-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  padding:16px 20px;
+}
+.achievement-card{
+  background:var(--bg);
+  border-radius:var(--radius-sm);
+  padding:14px;
+  text-align:center;
+}
+.achievement-card .ac-number{
+  font-size:24px;
+  font-weight:800;
+  color:var(--primary);
+  line-height:1;
+}
+.achievement-card .ac-label{
+  font-size:11px;
+  color:var(--text-muted);
+  margin-top:4px;
+  font-weight:500;
+}
+.achievement-card.highlight{
+  grid-column:1/-1;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  text-align:left;
+}
+.achievement-card.highlight .ac-number{font-size:28px;flex-shrink:0;width:56px}
+.achievement-card.highlight .ac-bar{
+  flex:1;
+  height:8px;
+  border-radius:4px;
+  background:var(--line);
+  overflow:hidden;
+}
+.achievement-card.highlight .ac-bar-fill{
+  height:100%;
+  border-radius:4px;
+  background:linear-gradient(90deg,var(--primary),#2a7fd4);
+}
+.achievement-card.highlight .ac-label{margin-top:0;font-size:11px}
+
+/* Motivation Banner */
+.motivation-banner{
+  background:linear-gradient(135deg,var(--primary),#003d7a);
+  border-radius:var(--radius);
+  padding:24px 20px;
+  color:#fff;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.motivation-banner::before{
+  content:'';
+  position:absolute;
+  top:-40%;right:-20%;
+  width:200px;height:200px;
+  border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.motivation-banner .mot-icon{
+  font-size:40px;
+  margin-bottom:8px;
+  position:relative;
+}
+.motivation-banner p{
+  font-size:15px;
+  font-weight:600;
+  line-height:1.5;
+  position:relative;
+}
+.motivation-banner .mot-sub{
+  font-size:12px;
+  opacity:.8;
+  margin-top:6px;
+  font-weight:400;
+}
+
+/* ═══════════════════════════ BOTTOM NAV (MOBILE) ═══════════════════════════ */
+.bottom-nav{
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:64px;
+  background:var(--white);
+  border-top:1px solid var(--line-light);
+  z-index:1000;
+  padding:0 8px;
+  box-shadow:0 -2px 10px rgba(0,0,0,.04);
+}
+.bottom-nav-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  height:100%;
+  max-width:480px;
+  margin:auto;
+}
+.nav-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+  padding:4px 12px;
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  text-decoration:none;
+  transition:all var(--transition);
+  position:relative;
+  border:none;
+  background:transparent;
+  color:var(--text-muted);
+  font-family:var(--font);
+}
+.nav-item .ni-icon{
+  font-size:22px;
+  line-height:1;
+}
+.nav-item .ni-label{
+  font-size:10px;
+  font-weight:500;
+}
+.nav-item.active{color:var(--primary)}
+.nav-item .ni-badge{
+  position:absolute;
+  top:0;right:2px;
+  min-width:16px;height:16px;
+  border-radius:8px;
+  background:var(--red);
+  color:#fff;
+  font-size:9px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px solid var(--white);
+}
+
+/* ═══════════════════════════ MODAL (detail popup) ═══════════════════════════ */
+.modal-overlay{
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.45);
+  z-index:3000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.show{display:flex}
+.modal-content{
+  background:var(--white);
+  max-width:600px;
+  width:100%;
+  max-height:80vh;
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.2);
+}
+.modal-header{
+  padding:18px 24px;
+  border-bottom:1px solid var(--line-light);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.modal-header h2{font-size:17px;font-weight:700;flex:1;margin-right:12px;line-height:1.4}
+.modal-close{
+  width:32px;height:32px;
+  border-radius:50%;
+  border:none;
+  background:var(--bg);
+  color:var(--text-secondary);
+  font-size:16px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all var(--transition);
+}
+.modal-close:hover{background:var(--line);color:var(--text)}
+.modal-body{
+  padding:24px;
+  overflow-y:auto;
+  max-height:60vh;
+  line-height:1.7;
+  font-size:14px;
+}
+.modal-body .modal-meta{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--line-light);
+  font-size:13px;
+  color:var(--text-secondary);
+}
+
+.feed-content b, .feed-content strong{font-weight:700}
+.feed-content i, .feed-content em{font-style:italic}
+.feed-content u{text-decoration:underline}
+.feed-content s{text-decoration:line-through}
+.feed-content a{color:var(--primary);text-decoration:underline;word-break:break-all}
+.feed-content a:hover{color:var(--primary-dark)}
+
+/* ═══════════════════════════ RESPONSIVE ═══════════════════════════ */
+@media(max-width:1200px){
+  .content{padding:20px 24px 100px}
+  .content-grid{grid-template-columns:1fr 320px;gap:24px}
+}
+@media(max-width:1024px){
+  .content{padding:20px 16px 80px}
+  .content-grid{grid-template-columns:1fr 300px;gap:20px}
+  .banner-slide{padding:28px 24px;flex-direction:column;text-align:center}
+  .banner-text{max-width:100%}
+  .banner-illustration{margin:16px 0 0;width:140px;height:120px;font-size:48px}
+  .bottom-nav{display:block}
+}
+@media(max-width:768px){
+  .content-grid{grid-template-columns:1fr;gap:20px}
+  .right-col{max-width:480px;margin:0 auto;width:100%}
+  .banner-text h2{font-size:22px}
+  .feed-card{padding:14px 16px}
+  .feed-header{padding:14px 16px}
+  .feed-header h2{font-size:16px}
+}
+@media(max-width:480px){
+  .header{padding:0 12px}
+  .banner-slide{padding:20px 16px}
+  .banner-text h2{font-size:20px}
+  .quick-grid{gap:6px}
+  .quick-item{padding:10px 6px}
+  .feed-card{gap:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ HEADER ═══════ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <a href="#" class="logo">
+        <div class="logo-icon"><img src="Logo-hocmai.png" alt="HOCMAI"></div>
+      </a>
+    </div>
+    <div class="header-right">
+      <a href="https://hocmai.vn/study/dashboard/overview" class="header-nav-link">Tổng quan</a>
+      <span class="header-nav-link active">Bản tin TopUni</span>
+      <a href="https://hocmai.vn/ho-tro/" class="header-nav-link">Hỗ trợ</a>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ LAYOUT ═══════ -->
+<div class="layout">
+
+  <!-- ═══════ MAIN CONTENT ═══════ -->
+  <main class="content">
+
+    <div class="content-grid">
+
+      <section class="banner-section">
+        <img src="banner bantin.jpg" alt="Banner Bản tin TopUni" style="width:100%;border-radius:var(--radius);display:block">
+      </section>
+
+      <!-- ═══════ LEFT COL — FEED ═══════ -->
+      <div class="feed-left-col" style="display:flex;flex-direction:column;gap:20px">
+      <!-- Tin hot -->
+      <section class="feed-section">
+        <div class="feed-header">
+          <h2>🔥 TIN NÓNG</h2>
+        </div>
+        <div class="feed-list" id="feedHotList">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+      <!-- Tin mới -->
+      <section class="feed-section">
+        <div class="feed-header">
+          <h2>📰 TIN MỚI</h2>
+          <span class="view-all" onclick="viewAllNotif()">Xem tất cả →</span>
+        </div>
+        <div class="feed-list" id="feedList">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+      </div><!-- /feed-left-col -->
+
+      <!-- ═══════ RIGHT COL ═══════ -->
+      <div class="right-col">
+
+        <!-- SỔ TAY HỌC VIÊN -->
+        <div class="quick-section">
+          <div class="section-header">
+            <h3>📖 SỔ TAY HỌC VIÊN</h3>
+          </div>
+          <div class="links-list" id="soTayList">
+            <a href="#" class="link-item"><span class="li-icon">📋</span> Đang tải...</a>
+          </div>
+        </div>
+
+        <!-- LỊCH HỌC SẮP DIỄN RA -->
+        <div class="quick-section">
+          <div class="section-header">
+            <h3>📅 LỊCH HỌC SẮP DIỄN RA</h3>
+          </div>
+          <div style="padding:0 16px 8px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line-light)" id="examFilters">
+            <button class="exam-filter active" data-exam="all" onclick="filterExam('all')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--primary);color:#fff;font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">Tất cả</button>
+            <button class="exam-filter" data-exam="hsa" onclick="filterExam('hsa')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">HSA</button>
+            <button class="exam-filter" data-exam="qda" onclick="filterExam('qda')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">QDA</button>
+            <button class="exam-filter" data-exam="tsa" onclick="filterExam('tsa')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">TSA</button>
+            <button class="exam-filter" data-exam="vact" onclick="filterExam('vact')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">V-ACT</button>
+            <button class="exam-filter" data-exam="tnthpt" onclick="filterExam('tnthpt')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">TN THPT</button>
+          </div>
+          <div class="schedule-list" id="scheduleList">
+            <!-- Rendered by JS -->
+          </div>
+          <div id="scheduleSeeMore" style="padding:8px 16px 14px;display:none;text-align:center;border-top:1px solid var(--line-light)">
+            <span class="view-link" onclick="toggleScheduleExpand()" style="cursor:pointer;font-size:13px;font-weight:600;color:var(--primary);display:inline-flex;align-items:center;gap:4px">
+              Xem thêm <span id="seeMoreArrow">▾</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Banner động lực -->
+        <div class="motivation-banner">
+          <div class="mot-icon">💪</div>
+          <p>Mỗi ngày học một chút,<br>gần hơn tới đại học.</p>
+          <div class="mot-sub">Cố lên, chúng tôi luôn đồng hành cùng bạn!</div>
+        </div>
+
+      </div><!-- /right-col -->
+    </div><!-- /content-grid -->
+  </main>
+</div><!-- /layout -->
+
+<!-- ═══════ BOTTOM NAV (mobile) ═══════ -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="nav-item active" onclick="location.href='#'">
+      <span class="ni-icon">🏠</span>
+      <span class="ni-label">Trang chủ</span>
+    </button>
+    <button class="nav-item" onclick="location.href='#'">
+      <span class="ni-icon">📈</span>
+      <span class="ni-label">Lộ trình</span>
+    </button>
+    <button class="nav-item" onclick="location.href='#'">
+      <span class="ni-icon">🔔</span>
+      <span class="ni-label">Feed</span>
+      <span class="ni-badge">3</span>
+    </button>
+    <button class="nav-item" onclick="location.href='#'">
+      <span class="ni-icon">👥</span>
+      <span class="ni-label">Cộng đồng</span>
+    </button>
+    <button class="nav-item" onclick="location.href='#'">
+      <span class="ni-icon">👤</span>
+      <span class="ni-label">Cá nhân</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════ MODAL ═══════ -->
+<div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle">Chi tiết</h2>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-meta" id="modalMeta"></div>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+</div>
+
+<script>// ══════════════════════════════════════════════════
+// DATA — loaded from API
+// ══════════════════════════════════════════════════
+const API_URL = 'https://script.google.com/macros/s/AKfycbz73HKnzuubZYVQaharliKVIT9jUUu5IAnmBtv5FVLpjNyDFM3H4m370WHZns__ElAybw/exec';
+
+const SO_TAY_LABELS = [
+  'Nội quy lớp học',
+  'Hướng dẫn học livestream',
+  'Hỏi đáp iChat',
+  'Nhận sách TopUni',
+  'Báo cáo học tập'
+];
+
+const SO_TAY_ICONS = ['📋','🎥','❓','📦','📊'];
+
+const EXAM_MAP = {
+  'All': 'all',
+  'HSA': 'hsa',
+  'QDA': 'qda',
+  'TSA': 'tsa',
+  'V-ACT': 'vact',
+  'TN THPT': 'tnthpt',
+  'ĐGNL': 'dgnl'
+};
+
+const FEED_ICON_MAP = {
+  'Quan trọng': {icon:'🔔', type:'class'},
+  'Quan trong': {icon:'🔔', type:'class'},
+  'Cần biết': {icon:'📄', type:'lesson'},
+  'Can biet': {icon:'📄', type:'lesson'},
+  'Khẩn cấp': {icon:'⚠️', type:'event'},
+  'Khan cap': {icon:'⚠️', type:'event'},
+  '': {icon:'📢', type:'system'}
+};
+
+const FEED_BADGE_STYLE = {
+  'Quan trọng': 'hot',
+  'Cần biết': 'new',
+  'Khẩn cấp': 'urgent'
+};
+
+let allScheduleData = [];
+let allFeedData = [];
+let allSoTayLinks = [];
+let _indexIconMap = {}; // Loai_TB -> icon URL
+let currentExamFilter = 'all';
+let scheduleExpanded = false;
+let feedDataReady = false;
+const SCHEDULE_MAX_PREVIEW = 3;
+
+// ══════════════════════════════════════════════════
+// FETCH API DATA
+// ══════════════════════════════════════════════════
+function parseDate(datestr){
+  // Parses ISO "2026-04-03T..." or "m/d/yyyy" or "d/m/yyyy" format
+  if(!datestr) return null;
+  const s = String(datestr);
+  // ISO format (from new API)
+  if(s.includes('T') || s.includes('-')){
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  const parts = s.split('/');
+  if(parts.length !== 3) return null;
+  const m = parseInt(parts[0]), d = parseInt(parts[1]), y = parseInt(parts[2]);
+  if(m > 12) return new Date(y, d-1, m);
+  return new Date(y, m-1, d);
+}
+
+function getExamKey(examStr){
+  if(!examStr) return 'all';
+  const upper = examStr.toUpperCase().trim();
+  if(upper.includes('TN THPT') || upper.includes('TNTHPT')) return 'tnthpt';
+  if(upper.includes('HSA')) return 'hsa';
+  if(upper.includes('QDA')) return 'qda';
+  if(upper.includes('TSA')) return 'tsa';
+  if(upper.includes('V-ACT') || upper.includes('VACT')) return 'vact';
+  return 'all';
+}
+
+// Return array of exam keys (supports comma-separated AF column)
+function getExamKeys(examStr){
+  if(!examStr) return ['all'];
+  var s = String(examStr).toUpperCase().trim();
+  if(s === 'ALL' || s === '') return ['all','hsa','qda','tsa','vact','tnthpt'];
+  var keys = [];
+  var parts = s.split(/[,;\/]+/);
+  for(var p = 0; p < parts.length; p++){
+    var t = parts[p].trim();
+    if(t === 'TN THPT' || t === 'TNTHPT') keys.push('tnthpt');
+    else if(t === 'HSA') keys.push('hsa');
+    else if(t === 'QDA') keys.push('qda');
+    else if(t === 'TSA') keys.push('tsa');
+    else if(t === 'V-ACT' || t === 'VACT') keys.push('vact');
+    else keys.push(t.toLowerCase());
+  }
+  if(keys.length === 0) keys.push('all');
+  return keys;
+}
+
+function formatDate(d){
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  return `${dd}/${mm}/${d.getFullYear()}`;
+}
+
+// Convert plain text with embedded URLs to HTML with clickable links
+// Also detects image URLs and renders them as <img>
+function formatContentHTML(text){
+  if(!text) return '';
+  // Auto-render image URLs as <img> (strip wrapping tags if present)
+  var imgExt = /(https?:\/\/[^\s<>]+\.(?:jpg|jpeg|png|gif|webp|svg|bmp)(?:\?[^\s<>]*)?)/gi;
+  text = String(text).replace(imgExt, function(url) {
+    return '<img src="' + url + '" loading="lazy" style="max-width:100%;border-radius:var(--radius-sm);margin:8px 0;display:block">';
+  });
+  // If already contains HTML tags (from rich text), just auto-link remaining plain URLs
+  if(/<[a-z][\s\S]*>/i.test(text)){
+    // Already has HTML — only link bare URLs not inside tags or img src
+    return text.replace(/(?<!href="|src="|">)(https?:\/\/[^\s<>]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">$1</a>');
+  }
+  var html = escapeHtml(text);
+  html = html.replace(/(https?:\/\/[^\s<>]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">$1</a>');
+  return html;
+}
+
+// Strip HTML tags → plain text (for card preview & title)
+function stripHtml(html){
+  if(!html) return '';
+  var div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent || div.innerText || '';
+}
+
+// Auto-detect data start offset and skip duplicate header artifacts
+function getDataStart(arr, section) {
+  if (!arr || arr.length < 2) return 1;
+  // Old format: row[1] has empty string key ""
+  if (arr[1] && arr[1].hasOwnProperty('')) return 2;
+
+  // Skip rows where data values match the header row (duplicate header artifact from wrong rich text offset)
+  var start = 1;
+  while (start < arr.length) {
+    var row = arr[start];
+    var titleVal = row['Tiêu_đề'] || row['Tiêu đề'] || row['Tên bài giảng'] || null;
+    var headerTitle = arr[0]['Tiêu_đề'] || arr[0]['Tiêu đề'] || arr[0]['Tên bài giảng'] || '';
+    if (!titleVal) break;
+    // Strip HTML tags and compare
+    var clean = String(titleVal).replace(/<[^>]*>/g, '').trim();
+    if (clean !== headerTitle) break;
+    start++;
+  }
+  return start;
+}
+
+async function fetchAPIData(){
+  try {
+    const resp = await fetch(API_URL);
+    const json = await resp.json();
+
+    // === So_tay ===
+    if(json.So_tay && json.So_tay.length > 1){
+      const start = getDataStart(json.So_tay);
+      allSoTayLinks = json.So_tay.slice(start).map(function(row){
+        return row['Link'] || row['3'] || row[''] || '';
+      }).filter(function(u){ return u && u.startsWith('http'); });
+    }
+
+    // === Lich_hoc ===
+    if(json.Lich_hoc && json.Lich_hoc.length > 1){
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const cutoff = new Date(today);
+      cutoff.setDate(cutoff.getDate() + 2);
+      cutoff.setHours(23,59,59,999);
+
+      const seen = new Set();
+      allScheduleData = [];
+      let start = getDataStart(json.Lich_hoc);
+      // Lich_hoc has a 2nd header row with numeric column mapping (e.g. Tên bài giảng = 3).
+      // Detect and skip it if present.
+      if (start < json.Lich_hoc.length) {
+        const r0 = json.Lich_hoc[start];
+        const testVal = r0['Tên bài giảng'] || r0['3'];
+        if (testVal === 3 || testVal === '3') start = start + 1;
+      }
+
+      for(let i = start; i < json.Lich_hoc.length; i++){
+        const row = json.Lich_hoc[i];
+        const bai   = row['Tên bài giảng'] || row['Tên_bài_giảng'] || row['3'] || '';
+        const gv    = row['Tên GV']  || row['Tên_GV']  || row['4'] || '';
+        const ngay  = row['Ngày live'] || row['Ngày_live'] || row['5'] || '';
+        const khung = row['Khung giờ'] || row['Khung_giờ'] || row['7'] || '';
+        const kyThi = row['Kỳ thi/Lớp'] || row['Kỳ_thi/Lớp'] || row['Kỳ thi'] || row['32'] || '';
+
+        if(!bai) continue;
+
+        const date = parseDate(ngay);
+        if(!date || date < today || date > cutoff) continue;
+
+        const key = `${bai}|${gv}|${ngay}`;
+        if(seen.has(key)) continue;
+        seen.add(key);
+
+        const time = khung ? String(khung).split('-')[0].trim() : '';
+
+        allScheduleData.push({
+          date: date.getDate(),
+          month: String(date.getMonth()+1).padStart(2,'0'),
+          time: time,
+          subject: bai,
+          teacher: gv,
+          exams: getExamKeys(kyThi),
+          fullDate: formatDate(date)
+        });
+      }
+      allScheduleData.sort((a,b) => {
+        if(a.month !== b.month) return a.month - b.month;
+        return a.date - b.date;
+      });
+    }
+
+    // === Ban_tin ===
+    if(json.Ban_tin && json.Ban_tin.length > 1){
+      allFeedData = [];
+      const start = getDataStart(json.Ban_tin);
+
+      for(let i = start; i < json.Ban_tin.length; i++){
+        const row = json.Ban_tin[i];
+        // Support both underscore and space key formats
+        const ngayDang  = row['Ngày_đăng']  || row['Ngày đăng']  || row['1'] || '';
+        const tieuDe    = row['Tiêu_đề']    || row['Tiêu đề']    || row['3'] || '';
+        const noiDung   = row['Nội_dung']   || row['Nội dung']   || row['4'] || '';
+        const isHot     = (row['Thumnail'] || row['Section'] || row['5'] || '') === 'Tin hot';
+        const kyThi     = row['Ky_thi']     || row['Kỳ thi']     || row['9'] || '';
+        const giaiDoan  = row['Giai_doan']  || row['Giai đoạn']  || row['10'] || '';
+        const mucDo     = row['Muc_do']     || row['Mức độ']     || row['12'] || '';
+        const loaiTB    = row['Loai_TB']    || row['Loại TB']    || row['8']  || '';
+
+        // Skip truly empty rows
+        if(!tieuDe && !noiDung) continue;
+
+        // Normalize mucDo (support variants without diacritics / short forms)
+        const mucDoNorm = String(mucDo || '').trim();
+        const mucDoKey = (
+          mucDoNorm === 'Quan trong' ? 'Quan trọng' :
+          mucDoNorm === 'Can biet' ? 'Cần biết' :
+          mucDoNorm === 'Khan cap' || mucDoNorm === 'Khẩn' ? 'Khẩn cấp' :
+          mucDoNorm
+        );
+        // Prefer icon from _index sheet (column H) matched by Loai_TB (column B)
+        let icon = _indexIconMap[loaiTB] || '';
+        let iconType = icon ? 'custom' : (FEED_ICON_MAP[mucDoKey] || FEED_ICON_MAP[mucDoNorm] || FEED_ICON_MAP['']).type;
+        if (!icon) {
+          icon = (FEED_ICON_MAP[mucDoKey] || FEED_ICON_MAP[mucDoNorm] || FEED_ICON_MAP['']).icon;
+        }
+
+        // Format date
+        let timeStr = 'Mới cập nhật';
+        let sortTs = 0;
+        if(ngayDang) {
+          try {
+            const d = new Date(ngayDang);
+            if(!isNaN(d.getTime())) {
+              timeStr = d.toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit', year:'numeric'});
+              sortTs = d.getTime();
+            } else {
+              timeStr = ngayDang;
+            }
+          } catch(e) { timeStr = ngayDang; }
+        }
+
+        allFeedData.push({
+          id: 'f'+i,
+          icon: icon,
+          iconType: iconType,
+          title: tieuDe || 'Thông báo',
+          desc: noiDung || '',
+          time: timeStr,
+          sortTs: sortTs || i,
+          badge: mucDoKey || mucDoNorm || '',
+          badgeType: FEED_BADGE_STYLE[mucDoKey] || FEED_BADGE_STYLE[mucDoNorm] || 'new',
+          category: (kyThi ? kyThi + ' · ' : '') + (giaiDoan || mucDoKey || mucDoNorm || 'Thông báo'),
+          isHot: isHot
+        });
+      }
+
+      // Newest first (rows without date keep relative sheet order via index fallback)
+      allFeedData.sort(function(a, b){
+        if(b.sortTs !== a.sortTs) return b.sortTs - a.sortTs;
+        return 0;
+      });
+    }
+  } catch(e){
+    console.error('API fetch error:', e);
+  }
+}
+
+// ══════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════
+function renderFeed(){
+  const hotList = document.getElementById('feedHotList');
+  const newList = document.getElementById('feedList');
+
+  if(allFeedData.length === 0){
+    hotList.innerHTML = '';
+    newList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:14px">Dang tai du lieu...</div>';
+    return;
+  }
+
+  const hotData = allFeedData.filter(function(item){ return item.isHot; });
+  const newData = allFeedData.filter(function(item){ return !item.isHot; });
+
+  function buildCard(item){
+    const badgeHtml = item.badge
+      ? '<span class="feed-badge ' + item.badgeType + '">' + escapeHtml(item.badge) + '</span>'
+      : '';
+    const rawDesc = item.desc || '';
+    // Strip HTML + remove image URLs for card preview
+    var plainDesc = stripHtml(rawDesc);
+    plainDesc = plainDesc.replace(/(https?:\/\/\S+\.(?:jpg|jpeg|png|gif|webp|svg|bmp)(?:\?\S*)?)/gi, '[Hình ảnh]');
+    var shortDesc = escapeHtml(plainDesc).substring(0, 140);
+    var hasMore = plainDesc.length > 200 || (rawDesc !== plainDesc);
+    var plainTitle = stripHtml(item.title || 'Thông báo').replace(/\s+/g, ' ').trim();
+    return '\n      <div class="feed-card" onclick="openFeedDetail(\'' + item.id + '\')">' +
+      '\n        <div class="feed-icon ' + item.iconType + '">' + (item.icon && item.icon.indexOf('http')===0 ? '<img src="'+item.icon+'" alt="">' : item.icon) + '</div>' +
+      '\n        <div class="feed-body">' +
+      '\n          <div class="feed-title">' + escapeHtml(plainTitle) + '</div>' +
+      '\n          <div class="feed-desc">' + shortDesc + (hasMore ? '...' : '') + '</div>' +
+      '\n          <div class="feed-meta">' +
+      '\n            <span class="feed-time">🕐 ' + escapeHtml(item.time) + '</span>' +
+      '\n            ' + badgeHtml +
+      '\n            <span class="feed-category">' + escapeHtml(item.category) + '</span>' +
+      '\n          </div>' +
+      '\n        </div>' +
+      '\n        <span class="feed-link-copy" title="Copy link" onclick="event.stopPropagation();copyFeedLink(\'' + item.id + '\')">🔗</span>' +
+      '\n        <span class="feed-arrow">›</span>' +
+      '\n      </div>';
+  }
+
+  // Tin nong
+  if(hotData.length === 0){
+    hotList.innerHTML = '<div style="padding:12px 20px;text-align:center;color:var(--text-muted);font-size:13px">Khong co tin nong</div>';
+  } else {
+    hotList.innerHTML = hotData.map(buildCard).join('');
+  }
+
+  // Tin moi
+  newList.innerHTML = newData.length === 0
+    ? '<div style="padding:12px 20px;text-align:center;color:var(--text-muted);font-size:13px">Khong co tin moi</div>'
+    : newData.map(buildCard).join('');
+}
+
+function renderSoTay(){
+  const container = document.getElementById('soTayList');
+  const links = allSoTayLinks.length >= 5 ? allSoTayLinks : [];
+  const items = SO_TAY_LABELS.map((label, i) => ({
+    label: label,
+    icon: SO_TAY_ICONS[i],
+    url: links[i] || '#'
+  }));
+  container.innerHTML = items.map(item => `
+    <a href="${escapeHtml(item.url)}" class="link-item" target="_blank" rel="noopener">
+      <span class="li-icon">${item.icon}</span> ${escapeHtml(item.label)}
+    </a>
+  `).join('');
+}
+
+function renderSchedule(exam){
+  const examType = exam || 'all';
+  const source = allScheduleData.length > 0 ? allScheduleData : [];
+  const filtered = examType === 'all'
+    ? source
+    : source.filter(function(s){
+        return s.exams.indexOf(examType) >= 0;
+      });
+  const list = document.getElementById('scheduleList');
+  const seeMore = document.getElementById('scheduleSeeMore');
+
+  if(source.length === 0){
+    list.innerHTML = '<div style="padding:16px 20px;text-align:center;color:var(--text-muted);font-size:13px">Đang tải dữ liệu...</div>';
+    if(seeMore) seeMore.style.display = 'none';
+    return;
+  }
+
+  const visible = scheduleExpanded
+    ? filtered
+    : filtered.slice(0, SCHEDULE_MAX_PREVIEW);
+  const hasMore = filtered.length > SCHEDULE_MAX_PREVIEW;
+
+  list.innerHTML = filtered.length === 0
+    ? '<div style="padding:16px 20px;text-align:center;color:var(--text-muted);font-size:13px">Không có lịch học phù hợp</div>'
+    : visible.map(item => `
+    <div class="class-card" onclick="openScheduleDetail('${escapeHtml(item.subject)}','${escapeHtml(item.teacher)}','${item.date}','${item.month}','${item.time}')">
+      <div class="class-date">
+        <div class="cd-day">${item.date}</div>
+        <div class="cd-month">Thg ${item.month}</div>
+        <div class="cd-time">${item.time}</div>
+      </div>
+      <div class="class-info">
+        <div class="ci-subject">${escapeHtml(item.subject)}</div>
+        <div class="ci-teacher">${escapeHtml(item.teacher)}</div>
+      </div>
+      <span class="class-arrow">›</span>
+    </div>
+  `).join('');
+
+  if(seeMore){
+    if(hasMore){
+      seeMore.style.display = 'block';
+      document.getElementById('seeMoreArrow').textContent = scheduleExpanded ? '▴' : '▾';
+      seeMore.querySelector('.view-link').innerHTML = scheduleExpanded
+        ? 'Thu gọn <span id="seeMoreArrow">▴</span>'
+        : 'Xem thêm <span id="seeMoreArrow">▾</span>';
+    } else {
+      seeMore.style.display = 'none';
+    }
+  }
+}
+
+function toggleScheduleExpand(){
+  scheduleExpanded = !scheduleExpanded;
+  renderSchedule(currentExamFilter);
+}
+
+function filterExam(exam){
+  currentExamFilter = exam;
+  scheduleExpanded = false;
+  document.querySelectorAll('#examFilters .exam-filter').forEach(btn => {
+    if(btn.dataset.exam === exam){
+      btn.style.background = 'var(--primary)';
+      btn.style.color = '#fff';
+    } else {
+      btn.style.background = 'var(--white)';
+      btn.style.color = 'var(--text-secondary)';
+    }
+  });
+  renderSchedule(exam);
+}
+
+// ══════════════════════════════════════════════════
+// DETAIL
+// ══════════════════════════════════════════════════
+function openFeedDetail(id){
+  const item = allFeedData.find(x => x.id === id);
+  if(!item) return;
+
+  // Set URL hash for sharing
+  window.location.hash = id;
+
+  // Title may contain HTML from rich text — strip for modal header
+  document.getElementById('modalTitle').textContent = stripHtml(item.title || 'Thông báo');
+
+  const badgeHtmlModal = item.badge
+    ? `<span class="feed-badge ${item.badgeType}" style="font-size:11px">${escapeHtml(item.badge)}</span>`
+    : '';
+  document.getElementById('modalMeta').innerHTML = `
+    <span>🕐 ${escapeHtml(item.time)}</span>
+    <span>📁 ${escapeHtml(item.category)}</span>
+    ${badgeHtmlModal}
+    <button onclick="copyFeedLink('${item.id}')" style="margin-left:auto;padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all var(--transition)"
+      onmouseover="this.style.background='var(--primary-light)';this.style.borderColor='var(--primary)'"
+      onmouseout="this.style.background='var(--bg)';this.style.borderColor='var(--line)'">🔗 Sao chép link</button>
+  `;
+  // Render content HTML with line breaks + auto-link URLs
+  var desc = item.desc || '';
+  // Split by newlines, skip empty, apply formatContentHTML to each line
+  var lines = desc.split('\n').filter(function(l){ return l.trim(); });
+  if(desc.indexOf('<') >= 0 && desc.indexOf('>') >= 0){
+    // Already has HTML from rich text — render as-is with URL linking
+    var html = formatContentHTML(desc);
+    // Replace newlines with <br>
+    html = html.replace(/\n/g, '<br>');
+    document.getElementById('modalContent').innerHTML = '<div class="feed-content" style="font-size:14px;line-height:1.8;color:var(--text)">' + html + '</div>';
+  } else {
+    // Plain text — wrap each paragraph
+    var html = lines.map(function(l){
+      return '<p style="margin:0 0 10px;line-height:1.8">' + formatContentHTML(l) + '</p>';
+    }).join('');
+    document.getElementById('modalContent').innerHTML = html;
+  }
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function copyFeedLink(id){
+  // Build full URL with hash
+  var url = window.location.origin + window.location.pathname + '#' + id;
+  navigator.clipboard.writeText(url).then(function(){
+    // Flash the clicked element briefly
+    showToast('Da sao chep link! ' + url.substring(url.lastIndexOf('#')), 2000);
+  }).catch(function(){
+    // Fallback for older browsers
+    showToast('Link: ' + url, 4000);
+  });
+}
+
+function showToast(msg, ms){
+  var toast = document.getElementById('toastMsg');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'toastMsg';
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;padding:10px 24px;border-radius:999px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(function(){ toast.style.opacity = '0'; }, ms);
+}
+
+function closeModal(){
+  document.getElementById('detailModal').classList.remove('show');
+  // Clear hash when closing
+  if(window.location.hash) {
+    history.pushState(null, '', window.location.pathname);
+  }
+}
+function openScheduleDetail(subject, teacher, date, month, time){
+  document.getElementById('modalTitle').textContent = 'Thông tin buổi học';
+  document.getElementById('modalMeta').innerHTML = `
+    <span>📅 ${date}/${month}</span>
+    <span>⏰ ${time}</span>
+  `;
+  document.getElementById('modalContent').innerHTML = `
+    <p style="font-size:15px;font-weight:600;margin-bottom:8px">${escapeHtml(subject)}</p>
+    <p style="font-size:14px;color:var(--text-secondary)">👨‍🏫 ${escapeHtml(teacher)}</p>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line-light)">
+      <a href="https://hocmai.vn/study/calendar" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:8px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;text-decoration:none;transition:all var(--transition)"
+         onmouseover="this.style.background='#004a8f';this.style.transform='translateY(-1px)'"
+         onmouseout="this.style.background='var(--primary)';this.style.transform='none'">📅 Vào lịch học</a>
+    </div>
+  `;
+  document.getElementById('detailModal').classList.add('show');
+}
+
+// ══════════════════════════════════════════════════
+// ACTIONS
+// ══════════════════════════════════════════════════
+function openBannerLink(){ if(allFeedData[0]) openFeedDetail(allFeedData[0].id); }
+function viewAllNotif(){ if(allFeedData[0]) openFeedDetail(allFeedData[0].id); }
+function viewAllSchedule(){ if(allScheduleData[0]){
+  const s = allScheduleData[0];
+  openScheduleDetail(s.subject, s.teacher, s.date, s.month, s.time);
+}}
+function openNotif(){ if(allFeedData[0]) openFeedDetail(allFeedData[0].id); }
+
+// ══════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════
+function escapeHtml(str){
+  if(!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  // Show loading state
+  renderFeed();
+  renderSchedule('all');
+
+  // Fetch real data
+  await fetchAPIData();
+  feedDataReady = true;
+
+  // Re-render with real data
+  renderFeed();
+  renderSoTay();
+  renderSchedule(currentExamFilter);
+
+  // Auto-open from URL hash (share link)
+  var hash = window.location.hash.replace('#', '');
+  if(hash && allFeedData.length > 0){
+    setTimeout(function(){ openFeedDetail(hash); }, 100);
+  }
+});
+</script>
+
+</body>
+</html>
