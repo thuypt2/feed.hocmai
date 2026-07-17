@@ -977,7 +977,7 @@ img{max-width:100%;height:auto;display:block}
 <script>// ══════════════════════════════════════════════════
 // DATA — loaded from API
 // ══════════════════════════════════════════════════
-const API_URL = 'https://script.google.com/macros/s/AKfycbyD_8ukpf3kUl8a1CKjILRthSX7xwUUzApq-l3PWRR4w8VnDimVFfARzH_Ag_2Nz2rm/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbz73HKnzuubZYVQaharliKVIT9jUUu5IAnmBtv5FVLpjNyDFM3H4m370WHZns__ElAybw/exec';
 
 const SO_TAY_LABELS = [
   'Nội quy lớp học',
@@ -1213,17 +1213,25 @@ async function fetchAPIData(){
         // Skip truly empty rows
         if(!tieuDe && !noiDung) continue;
 
-        // Normalize mucDo
-        const mucDoNorm = mucDo.trim();
-        const iconInfo = FEED_ICON_MAP[mucDoNorm] || FEED_ICON_MAP[''];
+        // Normalize mucDo (support variants without diacritics / short forms)
+        const mucDoNorm = String(mucDo || '').trim();
+        const mucDoKey = (
+          mucDoNorm === 'Quan trong' ? 'Quan trọng' :
+          mucDoNorm === 'Can biet' ? 'Cần biết' :
+          mucDoNorm === 'Khan cap' || mucDoNorm === 'Khẩn' ? 'Khẩn cấp' :
+          mucDoNorm
+        );
+        const iconInfo = FEED_ICON_MAP[mucDoKey] || FEED_ICON_MAP[mucDoNorm] || FEED_ICON_MAP[''];
 
         // Format date
         let timeStr = 'Mới cập nhật';
+        let sortTs = 0;
         if(ngayDang) {
           try {
             const d = new Date(ngayDang);
             if(!isNaN(d.getTime())) {
               timeStr = d.toLocaleDateString('vi-VN', {day:'2-digit', month:'2-digit', year:'numeric'});
+              sortTs = d.getTime();
             } else {
               timeStr = ngayDang;
             }
@@ -1237,12 +1245,19 @@ async function fetchAPIData(){
           title: tieuDe || 'Thông báo',
           desc: noiDung || '',
           time: timeStr,
-          badge: mucDoNorm || '',
-          badgeType: FEED_BADGE_STYLE[mucDoNorm] || 'new',
-          category: (kyThi ? kyThi + ' · ' : '') + (giaiDoan || mucDoNorm || 'Thông báo'),
+          sortTs: sortTs || i,
+          badge: mucDoKey || mucDoNorm || '',
+          badgeType: FEED_BADGE_STYLE[mucDoKey] || FEED_BADGE_STYLE[mucDoNorm] || 'new',
+          category: (kyThi ? kyThi + ' · ' : '') + (giaiDoan || mucDoKey || mucDoNorm || 'Thông báo'),
           isHot: isHot
         });
       }
+
+      // Newest first (rows without date keep relative sheet order via index fallback)
+      allFeedData.sort(function(a, b){
+        if(b.sortTs !== a.sortTs) return b.sortTs - a.sortTs;
+        return 0;
+      });
     }
   } catch(e){
     console.error('API fetch error:', e);
@@ -1275,10 +1290,11 @@ function renderFeed(){
     plainDesc = plainDesc.replace(/(https?:\/\/\S+\.(?:jpg|jpeg|png|gif|webp|svg|bmp)(?:\?\S*)?)/gi, '[Hình ảnh]');
     var shortDesc = escapeHtml(plainDesc).substring(0, 200);
     var hasMore = plainDesc.length > 200 || (rawDesc !== plainDesc);
+    var plainTitle = stripHtml(item.title || 'Thông báo').replace(/\s+/g, ' ').trim();
     return '\n      <div class="feed-card" onclick="openFeedDetail(\'' + item.id + '\')">' +
       '\n        <div class="feed-icon ' + item.iconType + '">' + item.icon + '</div>' +
       '\n        <div class="feed-body">' +
-      '\n          <div class="feed-title">' + escapeHtml(item.title) + '</div>' +
+      '\n          <div class="feed-title">' + escapeHtml(plainTitle) + '</div>' +
       '\n          <div class="feed-desc">' + shortDesc + (hasMore ? '...' : '') + '</div>' +
       '\n          <div class="feed-meta">' +
       '\n            <span class="feed-time">🕐 ' + escapeHtml(item.time) + '</span>' +

@@ -77,8 +77,8 @@ function readBanTin() {
   }
   result.push(headerObj);
 
-  // Dữ liệu (bắt đầu từ dòng sau header)
-  for (var i = headerRowIdx + 1; i < lastRow; i++) {
+  // Dữ liệu (bắt đầu từ dòng sau header) — dùng values.length để không sót dòng cuối
+  for (var i = headerRowIdx + 1; i < values.length; i++) {
     var row = values[i];
     var isEmpty = true;
     for (var c = 0; c < row.length; c++) {
@@ -96,12 +96,26 @@ function readBanTin() {
       if (!key) key = String(c + 1);
       if (c === 2) {
         // Cột C (0-based index 2) = Tiêu đề → rich text
+        // Fallback plain value nếu rich text lệch offset
         var rtC = (richRowIdx >= 0 && richRowIdx < richColC.length) ? richColC[richRowIdx][0] : null;
-        obj[key] = richTextToHtml(rtC);
+        var htmlC = richTextToHtml(rtC);
+        var plainC = row[c] != null ? String(row[c]) : '';
+        // Nếu rich text trả về text trùng header (artifact) thì dùng plain
+        if (!htmlC || htmlC.replace(/<[^>]*>/g, '').trim() === String(headers[2]).trim()) {
+          obj[key] = escapeHtml(plainC);
+        } else {
+          obj[key] = htmlC;
+        }
       } else if (c === 3) {
         // Cột D (0-based index 3) = Nội dung → rich text
         var rtD = (richRowIdx >= 0 && richRowIdx < richColD.length) ? richColD[richRowIdx][0] : null;
-        obj[key] = richTextToHtml(rtD);
+        var htmlD = richTextToHtml(rtD);
+        var plainD = row[c] != null ? String(row[c]) : '';
+        if (!htmlD || htmlD.replace(/<[^>]*>/g, '').trim() === String(headers[3]).trim()) {
+          obj[key] = escapeHtml(plainD);
+        } else {
+          obj[key] = htmlD;
+        }
       } else {
         obj[key] = row[c];
       }
