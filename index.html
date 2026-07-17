@@ -1306,7 +1306,7 @@ function renderFeed(){
     var hasMore = plainDesc.length > 200 || (rawDesc !== plainDesc);
     var plainTitle = stripHtml(item.title || 'Thông báo').replace(/\s+/g, ' ').trim();
     return '\n      <div class="feed-card" onclick="openFeedDetail(\'' + item.id + '\')">' +
-      '\n        <div class="feed-icon ' + item.iconType + '">' + item.icon + '</div>' +
+      '\n        <div class="feed-icon ' + item.iconType + '">' + (item.icon && item.icon.indexOf('http')===0 ? '<img src="'+item.icon+'" alt="">' : item.icon) + '</div>' +
       '\n        <div class="feed-body">' +
       '\n          <div class="feed-title">' + escapeHtml(plainTitle) + '</div>' +
       '\n          <div class="feed-desc">' + shortDesc + (hasMore ? '...' : '') + '</div>' +
