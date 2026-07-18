@@ -1152,7 +1152,7 @@ function formatContentHTML(text){
 
   // 2) Auto-render bare image URLs as <img>.
   // Skip URLs that already sit inside an HTML attribute (href="..." / src="...").
-  text = text.replace(/(https?:\/\/[^\s<>"']+)/gi, function(url, offset, whole) {
+  text = text.replace(/(https?:\/\/[^\s<>"']+)/gi, function(url, _, offset, whole) {
     var before = whole.slice(Math.max(0, offset - 10), offset).toLowerCase();
     if(/href\s*=\s*["']?$/.test(before) || /src\s*=\s*["']?$/.test(before)) return url;
     var src = toImageSrc(url);
@@ -1162,7 +1162,7 @@ function formatContentHTML(text){
 
   // If already contains HTML tags (from rich text / injected img), auto-link remaining plain URLs
   if(/<[a-z][\s\S]*>/i.test(text)){
-    return text.replace(/(https?:\/\/[^\s<>"']+)/g, function(url, offset, whole){
+    return text.replace(/(https?:\/\/[^\s<>"']+)/g, function(url, _, offset, whole){
       var before = whole.slice(Math.max(0, offset - 10), offset).toLowerCase();
       if(/href\s*=\s*["']?$/.test(before) || /src\s*=\s*["']?$/.test(before)) return url;
       // Don't re-link if already converted somehow
