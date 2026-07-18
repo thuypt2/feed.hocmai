@@ -434,6 +434,19 @@ img{max-width:100%;height:auto;display:block}
 }
 .feed-card:hover .feed-link-copy{opacity:1}
 .feed-link-copy:hover{background:var(--primary-light);color:var(--primary)}
+.feed-like-btn{
+  display:flex;align-items:center;gap:3px;
+  font-size:13px;color:var(--text-muted);
+  cursor:pointer;padding:4px 6px;border-radius:8px;
+  transition:all var(--transition);flex-shrink:0;
+  user-select:none;border:none;background:none;
+  font-family:var(--font);
+}
+.feed-card:hover .feed-like-btn{opacity:1}
+.feed-like-btn:hover{background:var(--red-light);color:var(--red)}
+.feed-like-btn.liked{color:var(--red);font-weight:600}
+.feed-like-btn .like-icon{font-size:16px;line-height:1}
+.feed-like-btn .like-count{font-size:12px;min-width:14px;text-align:center}
 
 /* ═══════════════════════════ RIGHT COL ═══════════════════════════ */
 .right-col{
@@ -902,7 +915,7 @@ img{max-width:100%;height:auto;display:block}
     <div class="content-grid">
 
       <section class="banner-section">
-        <img src="banner bantin.jpg" alt="Banner Bản tin TopUni" style="width:100%;border-radius:var(--radius);display:block">
+        <img src="banner ban tin.png" alt="Banner Bản tin TopUni" style="width:100%;border-radius:var(--radius);display:block">
       </section>
 
       <!-- ═══════ LEFT COL — FEED ═══════ -->
@@ -910,7 +923,7 @@ img{max-width:100%;height:auto;display:block}
       <!-- Tin hot -->
       <section class="feed-section">
         <div class="feed-header">
-          <h2>🔥 TIN NÓNG</h2>
+          <h2>⚡ TIN NÓNG</h2>
         </div>
         <div class="feed-list" id="feedHotList">
           <!-- Rendered by JS -->
@@ -919,7 +932,7 @@ img{max-width:100%;height:auto;display:block}
       <!-- Tin mới -->
       <section class="feed-section">
         <div class="feed-header">
-          <h2>📰 TIN MỚI</h2>
+          <h2>✨ TIN MỚI</h2>
           <span class="view-all" onclick="viewAllNotif()">Xem tất cả →</span>
         </div>
         <div class="feed-list" id="feedList">
@@ -934,7 +947,7 @@ img{max-width:100%;height:auto;display:block}
         <!-- SỔ TAY HỌC VIÊN -->
         <div class="quick-section">
           <div class="section-header">
-            <h3>📖 SỔ TAY HỌC VIÊN</h3>
+            <h3>📘 SỔ TAY HỌC VIÊN</h3>
           </div>
           <div class="links-list" id="soTayList">
             <a href="#" class="link-item"><span class="li-icon">📋</span> Đang tải...</a>
@@ -947,12 +960,12 @@ img{max-width:100%;height:auto;display:block}
             <h3>📅 LỊCH HỌC SẮP DIỄN RA</h3>
           </div>
           <div style="padding:0 16px 8px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line-light)" id="examFilters">
-            <button class="exam-filter active" data-exam="all" onclick="filterExam('all')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--primary);color:#fff;font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">Tất cả</button>
-            <button class="exam-filter" data-exam="hsa" onclick="filterExam('hsa')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">HSA</button>
-            <button class="exam-filter" data-exam="qda" onclick="filterExam('qda')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">QDA</button>
-            <button class="exam-filter" data-exam="tsa" onclick="filterExam('tsa')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">TSA</button>
-            <button class="exam-filter" data-exam="vact" onclick="filterExam('vact')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">V-ACT</button>
-            <button class="exam-filter" data-exam="tnthpt" onclick="filterExam('tnthpt')" style="padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)">TN THPT</button>
+            <button class="exam-filter active" data-exam="all" onclick="filterExam('all')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--primary);color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">Tất cả</button>
+            <button class="exam-filter" data-exam="hsa" onclick="filterExam('hsa')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">HSA</button>
+            <button class="exam-filter" data-exam="qda" onclick="filterExam('qda')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">QDA</button>
+            <button class="exam-filter" data-exam="tsa" onclick="filterExam('tsa')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">TSA</button>
+            <button class="exam-filter" data-exam="vact" onclick="filterExam('vact')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">V-ACT</button>
+            <button class="exam-filter" data-exam="tnthpt" onclick="filterExam('tnthpt')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">TN THPT</button>
           </div>
           <div class="schedule-list" id="scheduleList">
             <!-- Rendered by JS -->
@@ -966,7 +979,7 @@ img{max-width:100%;height:auto;display:block}
 
         <!-- Banner động lực -->
         <div class="motivation-banner">
-          <div class="mot-icon">💪</div>
+          <div class="mot-icon">🎯</div>
           <p>Mỗi ngày học một chút,<br>gần hơn tới đại học.</p>
           <div class="mot-sub">Cố lên, chúng tôi luôn đồng hành cùng bạn!</div>
         </div>
@@ -1020,7 +1033,10 @@ img{max-width:100%;height:auto;display:block}
     </div>
     <div class="modal-footer">
       <span class="modal-footer-tag" id="modalFooterTag"></span>
-      <button class="modal-share-btn" onclick="copyFeedLink(currentModalId)">🔗 Chia sẻ</button>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Chia sẻ ngay cho bạn bè thông tin hữu ích này nhé! ⭐</div>
+        <button class="modal-share-btn" onclick="copyFeedLink(currentModalId)">🔗 Chia sẻ</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1038,7 +1054,7 @@ const SO_TAY_LABELS = [
   'Báo cáo học tập'
 ];
 
-const SO_TAY_ICONS = ['📋','🎥','❓','📦','📊'];
+const SO_TAY_ICONS = ['📜','▶️','💬','📨','📈'];
 
 const EXAM_MAP = {
   'All': 'all',
@@ -1053,11 +1069,11 @@ const EXAM_MAP = {
 const FEED_ICON_MAP = {
   'Quan trọng': {icon:'🔔', type:'class'},
   'Quan trong': {icon:'🔔', type:'class'},
-  'Cần biết': {icon:'📄', type:'lesson'},
-  'Can biet': {icon:'📄', type:'lesson'},
-  'Khẩn cấp': {icon:'⚠️', type:'event'},
-  'Khan cap': {icon:'⚠️', type:'event'},
-  '': {icon:'📢', type:'system'}
+  'Cần biết': {icon:'📝', type:'lesson'},
+  'Can biet': {icon:'📝', type:'lesson'},
+  'Khẩn cấp': {icon:'🚨', type:'event'},
+  'Khan cap': {icon:'🚨', type:'event'},
+  '': {icon:'📣', type:'system'}
 };
 
 const FEED_BADGE_STYLE = {
@@ -1442,6 +1458,7 @@ function renderFeed(){
       '\n            <span class="feed-category">' + escapeHtml(item.category) + '</span>' +
       '\n          </div>' +
       '\n        </div>' +
+      '\n        <button class="feed-like-btn" id="like-btn-' + item.id + '" onclick="event.stopPropagation();toggleLike(\'' + item.id + '\')" title="Thich bai viet nay"><span class="like-icon">♡</span><span class="like-count">0</span></button>' +
       '\n        <span class="feed-link-copy" title="Copy link" onclick="event.stopPropagation();copyFeedLink(\'' + item.id + '\')">🔗</span>' +
       '\n        <span class="feed-arrow">›</span>' +
       '\n      </div>';
@@ -1602,9 +1619,49 @@ function copyFeedLink(id){
   // Build full URL with hash
   var url = window.location.origin + window.location.pathname + '#' + id;
   navigator.clipboard.writeText(url).then(function(){
-    showToast('Da sao chep link! ' + url.substring(url.lastIndexOf('#')), 2000);
+    showToast('✅ Đã sao chép link! Chia sẻ ngay cho bạn bè thông tin hữu ích này nhé! ⭐', 2500);
   }).catch(function(){
     showToast('Link: ' + url, 4000);
+  });
+}
+
+// ══════════════════════════════════════════════════
+// LIKE SYSTEM (localStorage)
+// ══════════════════════════════════════════════════
+function getLikeStorage(){
+  try { return JSON.parse(localStorage.getItem('feed_likes') || '{}'); } catch(e) { return {}; }
+}
+function saveLikeStorage(obj){
+  try { localStorage.setItem('feed_likes', JSON.stringify(obj)); } catch(e) {}
+}
+function toggleLike(id){
+  var storage = getLikeStorage();
+  if(storage[id]){
+    delete storage[id];
+  } else {
+    storage[id] = Date.now();
+  }
+  saveLikeStorage(storage);
+  updateLikeButton(id);
+}
+function updateLikeButton(id){
+  var storage = getLikeStorage();
+  var btn = document.getElementById('like-btn-' + id);
+  if(!btn) return;
+  var liked = !!storage[id];
+  var icon = btn.querySelector('.like-icon');
+  if(icon) icon.textContent = liked ? '♥' : '♡';
+  btn.classList.toggle('liked', liked);
+}
+function initAllLikes(){
+  var storage = getLikeStorage();
+  var btns = document.querySelectorAll('.feed-like-btn');
+  btns.forEach(function(btn){
+    var id = btn.id.replace('like-btn-', '');
+    var liked = !!storage[id];
+    var icon = btn.querySelector('.like-icon');
+    if(icon) icon.textContent = liked ? '♥' : '♡';
+    btn.classList.toggle('liked', liked);
   });
 }
 
@@ -1682,6 +1739,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Re-render with real data
   renderFeed();
+  initAllLikes();
   renderSoTay();
   renderSchedule(currentExamFilter);
 
