@@ -834,6 +834,22 @@ img{max-width:100%;height:auto;display:block}
   flex-shrink:0;
 }
 .modal-footer-tag{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+.modal-share-prompt{
+  font-size:13px;color:var(--text-muted);font-style:italic;font-weight:400;
+  letter-spacing:.2px;white-space:nowrap;
+}
+.modal-like-inline{
+  display:flex;align-items:center;gap:4px;
+  font-size:13px;color:var(--text-muted);
+  cursor:pointer;padding:6px 10px;border-radius:10px;
+  transition:all var(--transition);user-select:none;border:none;background:none;
+  font-family:var(--font);flex-shrink:0;
+}
+.modal-like-inline:hover{background:var(--red-light);color:var(--red)}
+.modal-like-inline.liked{color:var(--red);font-weight:600}
+.modal-like-inline .ml-icon{font-size:18px;line-height:1}
+.modal-like-inline .ml-count{font-size:13px;min-width:16px;text-align:center}
+.modal-share-wrap{display:flex;align-items:center;gap:10px;flex-shrink:0}
 .modal-share-btn{
   padding:8px 20px;border-radius:12px;border:none;
   background:linear-gradient(135deg,var(--primary),#0070cc);
@@ -877,6 +893,10 @@ img{max-width:100%;height:auto;display:block}
   .feed-card{padding:14px 16px}
   .feed-header{padding:14px 16px}
   .feed-header h2{font-size:16px}
+  .modal-share-prompt{display:none}
+  .modal-footer{padding:0 16px 16px}
+  .modal-like-inline{padding:6px 8px}
+  .modal-like-inline .ml-count{font-size:12px}
 }
 @media(max-width:480px){
   .header{padding:0 12px}
@@ -1032,9 +1052,10 @@ img{max-width:100%;height:auto;display:block}
       <div id="modalContent"></div>
     </div>
     <div class="modal-footer">
+      <button class="modal-like-inline" id="modalLikeBtn" onclick="event.stopPropagation();toggleLike(currentModalId)" title="Thích bài viết này"><span class="ml-icon">♡</span><span class="ml-count">0</span></button>
       <span class="modal-footer-tag" id="modalFooterTag"></span>
-      <div style="text-align:right">
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Chia sẻ ngay cho bạn bè thông tin hữu ích này nhé! ⭐</div>
+      <div class="modal-share-wrap">
+        <span class="modal-share-prompt">Chia sẻ ngay cho bạn bè thông tin hữu ích này nhé! ⭐</span>
         <button class="modal-share-btn" onclick="copyFeedLink(currentModalId)">🔗 Chia sẻ</button>
       </div>
     </div>
@@ -1577,6 +1598,10 @@ function openFeedDetail(id){
   window.location.hash = id;
   currentModalId = id;
 
+  // Show like button (may have been hidden by schedule modal)
+  var mlb = document.getElementById('modalLikeBtn');
+  if(mlb) mlb.style.display = '';
+
   // Badge row
   var badgeRowHtml = '';
   if(item.badge){
@@ -1612,6 +1637,9 @@ function openFeedDetail(id){
     document.getElementById('modalContent').innerHTML = html;
   }
   document.getElementById('detailModal').classList.add('show');
+  // Sync modal like button
+  seedLikeCount(id);
+  updateLikeDisplay(id);
 }
 
 function copyFeedLink(id){
@@ -1626,7 +1654,7 @@ function copyFeedLink(id){
 }
 
 // ══════════════════════════════════════════════════
-// LIKE SYSTEM (localStorage)
+// LIKE SYSTEM (localStorage — liked state + count)
 // ══════════════════════════════════════════════════
 function getLikeStorage(){
   try { return JSON.parse(localStorage.getItem('feed_likes') || '{}'); } catch(e) { return {}; }
@@ -1634,34 +1662,74 @@ function getLikeStorage(){
 function saveLikeStorage(obj){
   try { localStorage.setItem('feed_likes', JSON.stringify(obj)); } catch(e) {}
 }
-function toggleLike(id){
-  var storage = getLikeStorage();
-  if(storage[id]){
-    delete storage[id];
-  } else {
-    storage[id] = Date.now();
-  }
-  saveLikeStorage(storage);
-  updateLikeButton(id);
+function getLikeCount(id){
+  var s = getLikeStorage();
+  var entry = s[id];
+  if(!entry) return 0;
+  return entry.c || 0;
 }
-function updateLikeButton(id){
-  var storage = getLikeStorage();
+function isLiked(id){
+  var s = getLikeStorage();
+  return !!(s[id] && s[id].t);
+}
+function seedLikeCount(id){
+  var s = getLikeStorage();
+  if(!s[id]){ s[id] = {}; }
+  if(!s[id].c){
+    // Simple hash from id string -> deterministic seed 3..47
+    var h = 0; for(var i=0;i<id.length;i++){ h = ((h<<5)-h) + id.charCodeAt(i); h |= 0; }
+    s[id].c = 3 + (Math.abs(h) % 45);
+  }
+  saveLikeStorage(s);
+}
+function toggleLike(id){
+  var s = getLikeStorage();
+  if(!s[id]) s[id] = {};
+  if(s[id].t){
+    // Unlike
+    delete s[id].t;
+    if(!s[id].c) s[id].c = 1;
+    s[id].c = Math.max(0, s[id].c - 1);
+  } else {
+    // Like
+    s[id].t = Date.now();
+    if(!s[id].c) s[id].c = 1;
+    s[id].c = s[id].c + 1;
+  }
+  saveLikeStorage(s);
+  updateLikeDisplay(id);
+}
+function updateLikeDisplay(id){
+  var liked = isLiked(id);
+  var count = getLikeCount(id);
+
+  // Card button
   var btn = document.getElementById('like-btn-' + id);
-  if(!btn) return;
-  var liked = !!storage[id];
-  var icon = btn.querySelector('.like-icon');
-  if(icon) icon.textContent = liked ? '♥' : '♡';
-  btn.classList.toggle('liked', liked);
+  if(btn){
+    var icon = btn.querySelector('.like-icon');
+    var cnt  = btn.querySelector('.like-count');
+    if(icon) icon.textContent = liked ? '♥' : '♡';
+    if(cnt)  cnt.textContent = count;
+    btn.classList.toggle('liked', liked);
+  }
+
+  // Modal button (if open for this id)
+  if(currentModalId === id){
+    var mb = document.getElementById('modalLikeBtn');
+    if(mb){
+      var mi = mb.querySelector('.ml-icon');
+      var mc = mb.querySelector('.ml-count');
+      if(mi) mi.textContent = liked ? '♥' : '♡';
+      if(mc) mc.textContent = count;
+      mb.classList.toggle('liked', liked);
+    }
+  }
 }
 function initAllLikes(){
-  var storage = getLikeStorage();
-  var btns = document.querySelectorAll('.feed-like-btn');
-  btns.forEach(function(btn){
+  document.querySelectorAll('.feed-like-btn').forEach(function(btn){
     var id = btn.id.replace('like-btn-', '');
-    var liked = !!storage[id];
-    var icon = btn.querySelector('.like-icon');
-    if(icon) icon.textContent = liked ? '♥' : '♡';
-    btn.classList.toggle('liked', liked);
+    seedLikeCount(id);
+    updateLikeDisplay(id);
   });
 }
 
@@ -1688,6 +1756,9 @@ function closeModal(){
 }
 function openScheduleDetail(subject, teacher, date, month, time){
   currentModalId = null;
+  // Hide like button for schedule modal
+  var mlb = document.getElementById('modalLikeBtn');
+  if(mlb) mlb.style.display = 'none';
   document.getElementById('modalBadgeRow').innerHTML = '<span class="modal-badge-info">📅 Lịch học</span>';
   document.getElementById('modalTitle').textContent = 'Thông tin buổi học';
   document.getElementById('modalMeta').innerHTML =
