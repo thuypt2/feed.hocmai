@@ -754,8 +754,8 @@ img{max-width:100%;height:auto;display:block}
 .modal-overlay.show{display:flex}
 .modal-content{
   background:var(--white);
-  width:500px;
-  max-width:94vw;
+  width:700px;
+  max-width:96vw;
   max-height:88vh;
   border-radius:24px;
   overflow:hidden;
@@ -1576,8 +1576,8 @@ function openFeedDetail(id){
     '<span>🕐 ' + escapeHtml(item.time) + '</span>' +
     '<span>📁 ' + escapeHtml(item.category) + '</span>';
 
-  // Footer tag
-  document.getElementById('modalFooterTag').innerHTML = '📖 ' + escapeHtml(item.category);
+  // Footer tag: only for schedule (teacher), not feed (category already in meta)
+  document.getElementById('modalFooterTag').innerHTML = '';
 
   // Render content HTML
   var desc = item.desc || '';
