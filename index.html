@@ -807,6 +807,14 @@ img{max-width:100%;height:auto;display:block}
 .feed-content s{text-decoration:line-through}
 .feed-content a{color:var(--primary);text-decoration:underline;word-break:break-all}
 .feed-content a:hover{color:var(--primary-dark)}
+.feed-content img{
+  max-width:100%;
+  height:auto;
+  border-radius:var(--radius-sm);
+  margin:10px 0;
+  display:block;
+  background:#f3f4f6;
+}
 
 /* ═══════════════════════════ RESPONSIVE ═══════════════════════════ */
 @media(max-width:1200px){
@@ -1087,22 +1095,89 @@ function formatDate(d){
   return `${dd}/${mm}/${d.getFullYear()}`;
 }
 
+// Convert Google Drive / Google Photos share URLs to a direct image src when possible.
+// Returns null if URL is not a supported image host pattern.
+function toImageSrc(url){
+  if(!url) return null;
+  var u = String(url).trim().replace(/[),.;]+$/,''); // trim trailing punctuation
+  if(!u) return null;
+
+  // Direct image file extension
+  if(/\.(?:jpg|jpeg|png|gif|webp|svg|bmp)(?:\?|#|$)/i.test(u)) return u;
+
+  // Google Drive: /file/d/FILE_ID/...  or open?id=FILE_ID  or uc?id=FILE_ID
+  var driveId = null;
+  var m = u.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i);
+  if(m) driveId = m[1];
+  if(!driveId){
+    m = u.match(/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([a-zA-Z0-9_-]+)/i);
+    if(m) driveId = m[1];
+  }
+  if(!driveId){
+    m = u.match(/drive\.google\.com\/uc\?(?:[^#]*&)?export=(?:view|download)&id=([a-zA-Z0-9_-]+)/i);
+    if(m) driveId = m[1];
+  }
+  if(driveId){
+    // lh3 thumbnail endpoint is more reliable for <img> than /uc?export=view
+    return 'https://lh3.googleusercontent.com/d/' + driveId + '=w1600';
+  }
+
+  // Google user content / Photos CDN direct hosts
+  if(/googleusercontent\.com\//i.test(u) || /ggpht\.com\//i.test(u) || /lh3\.google\.com\//i.test(u)){
+    return u;
+  }
+
+  // Google Photos share links (photos.app.goo.gl / photos.google.com) cannot be
+  // converted client-side without an API — leave as normal link.
+  return null;
+}
+
+function imgTag(src){
+  return '<img src="' + src + '" loading="lazy" alt="Hình ảnh thông báo" class="feed-inline-img" onerror="this.style.display=\'none\'">';
+}
+
 // Convert plain text with embedded URLs to HTML with clickable links
-// Also detects image URLs and renders them as <img>
+// Also detects image URLs (file ext + Google Drive + googleusercontent) and renders <img>
 function formatContentHTML(text){
   if(!text) return '';
-  // Auto-render image URLs as <img> (strip wrapping tags if present)
-  var imgExt = /(https?:\/\/[^\s<>]+\.(?:jpg|jpeg|png|gif|webp|svg|bmp)(?:\?[^\s<>]*)?)/gi;
-  text = String(text).replace(imgExt, function(url) {
-    return '<img src="' + url + '" loading="lazy" style="max-width:100%;border-radius:var(--radius-sm);margin:8px 0;display:block">';
+  text = String(text);
+
+  // 1) If rich-text wrapped a Drive/image URL in <a href="...">...</a>,
+  //    replace the whole anchor with <img> first (before bare-URL pass).
+  text = text.replace(/<a\b[^>]*\bhref=["'](https?:\/\/[^"']+)["'][^>]*>[\s\S]*?<\/a>/gi, function(full, href){
+    var src = toImageSrc(href);
+    if(src) return imgTag(src);
+    return full;
   });
-  // If already contains HTML tags (from rich text), just auto-link remaining plain URLs
+
+  // 2) Auto-render bare image URLs as <img>.
+  // Skip URLs that already sit inside an HTML attribute (href="..." / src="...").
+  text = text.replace(/(https?:\/\/[^\s<>"']+)/gi, function(url, offset, whole) {
+    var before = whole.slice(Math.max(0, offset - 10), offset).toLowerCase();
+    if(/href\s*=\s*["']?$/.test(before) || /src\s*=\s*["']?$/.test(before)) return url;
+    var src = toImageSrc(url);
+    if(src) return imgTag(src);
+    return url;
+  });
+
+  // If already contains HTML tags (from rich text / injected img), auto-link remaining plain URLs
   if(/<[a-z][\s\S]*>/i.test(text)){
-    // Already has HTML — only link bare URLs not inside tags or img src
-    return text.replace(/(?<!href="|src="|">)(https?:\/\/[^\s<>]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">$1</a>');
+    return text.replace(/(https?:\/\/[^\s<>"']+)/g, function(url, offset, whole){
+      var before = whole.slice(Math.max(0, offset - 10), offset).toLowerCase();
+      if(/href\s*=\s*["']?$/.test(before) || /src\s*=\s*["']?$/.test(before)) return url;
+      // Don't re-link if already converted somehow
+      if(toImageSrc(url)) return imgTag(toImageSrc(url));
+      return '<a href="' + url + '" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">' + url + '</a>';
+    });
   }
+
+  // Plain text path
   var html = escapeHtml(text);
-  html = html.replace(/(https?:\/\/[^\s<>]+)/g, '<a href="$1" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">$1</a>');
+  html = html.replace(/(https?:\/\/[^\s<>"']+)/gi, function(url){
+    var src = toImageSrc(url);
+    if(src) return imgTag(src);
+    return '<a href="' + url + '" target="_blank" rel="noopener" style="color:var(--primary);word-break:break-all">' + url + '</a>';
+  });
   return html;
 }
 
@@ -1314,7 +1389,9 @@ function renderFeed(){
     const rawDesc = item.desc || '';
     // Strip HTML + remove image URLs for card preview
     var plainDesc = stripHtml(rawDesc);
+    // Collapse direct image URLs + Google Drive/Photos CDN links in card preview
     plainDesc = plainDesc.replace(/(https?:\/\/\S+\.(?:jpg|jpeg|png|gif|webp|svg|bmp)(?:\?\S*)?)/gi, '[Hình ảnh]');
+    plainDesc = plainDesc.replace(/https?:\/\/(?:drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?)[^\s]+|lh3\.googleusercontent\.com\/[^\s]+|[^/\s]*googleusercontent\.com\/[^\s]+|[^/\s]*ggpht\.com\/[^\s]+)/gi, '[Hình ảnh]');
     var shortDesc = escapeHtml(plainDesc).substring(0, 140);
     var hasMore = plainDesc.length > 200 || (rawDesc !== plainDesc);
     var plainTitle = stripHtml(item.title || 'Thông báo').replace(/\s+/g, ' ').trim();
