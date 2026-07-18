@@ -743,35 +743,49 @@ img{max-width:100%;height:auto;display:block}
 .modal-overlay{
   position:fixed;
   top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,.45);
+  background:rgba(0,0,0,.35);
   z-index:3000;
   display:none;
   align-items:center;
   justify-content:center;
   padding:20px;
-  backdrop-filter:blur(4px);
+  backdrop-filter:blur(8px);
 }
 .modal-overlay.show{display:flex}
 .modal-content{
   background:var(--white);
-  max-width:600px;
-  width:100%;
-  max-height:80vh;
-  border-radius:var(--radius);
+  width:500px;
+  max-width:94vw;
+  max-height:88vh;
+  border-radius:24px;
   overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.2);
+  box-shadow:0 30px 80px rgba(0,0,0,.15),0 0 0 1px rgba(0,0,0,.04);
+  animation:modalPopIn .4s cubic-bezier(.16,1,.3,1);
+  display:flex;flex-direction:column;
+}
+@keyframes modalPopIn{
+  from{opacity:0;transform:translateY(40px) scale(.95)}
+  to{opacity:1;transform:translateY(0) scale(1)}
 }
 .modal-header{
-  padding:18px 24px;
-  border-bottom:1px solid var(--line-light);
+  padding:24px 24px 0;
   display:flex;
   align-items:center;
   justify-content:space-between;
 }
-.modal-header h2{font-size:17px;font-weight:700;flex:1;margin-right:12px;line-height:1.4}
+.modal-badge-row{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.modal-badge-row span{
+  font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:6px;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.modal-badge-hot{background:#ffeaea;color:#d32f2f}
+.modal-badge-info{background:var(--primary-light);color:var(--primary)}
+.modal-header h2{
+  font-size:19px;font-weight:800;color:var(--text);line-height:1.4;margin-right:12px;
+}
 .modal-close{
-  width:32px;height:32px;
-  border-radius:50%;
+  width:36px;height:36px;
+  border-radius:12px;
   border:none;
   background:var(--bg);
   color:var(--text-secondary);
@@ -781,36 +795,50 @@ img{max-width:100%;height:auto;display:block}
   align-items:center;
   justify-content:center;
   transition:all var(--transition);
+  flex-shrink:0;
 }
-.modal-close:hover{background:var(--line);color:var(--text)}
-.modal-body{
-  padding:24px;
-  overflow-y:auto;
-  max-height:60vh;
-  line-height:1.7;
-  font-size:14px;
-}
-.modal-body .modal-meta{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-bottom:16px;
-  padding-bottom:12px;
-  border-bottom:1px solid var(--line-light);
+.modal-close:hover{background:#1a1a2e;color:#fff}
+.modal-meta{
+  padding:6px 24px 0;
   font-size:13px;
   color:var(--text-secondary);
+  display:flex;gap:16px;flex-wrap:wrap;
 }
+.modal-body{
+  padding:20px 24px 24px;
+  overflow-y:auto;
+  flex:1;
+  font-size:14px;
+}
+.modal-divider{
+  height:1px;
+  background:linear-gradient(90deg,var(--line),transparent);
+  margin-bottom:18px;
+}
+.modal-footer{
+  padding:0 24px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.modal-footer-tag{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+.modal-share-btn{
+  padding:8px 20px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--primary),#0070cc);
+  color:#fff;font-size:13px;font-weight:600;cursor:pointer;
+  transition:all var(--transition);display:flex;align-items:center;gap:6px;
+}
+.modal-share-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,91,172,.3)}
 
-.feed-content b, .feed-content strong{font-weight:700}
+.feed-content b, .feed-content strong{color:var(--text);font-weight:700}
 .feed-content i, .feed-content em{font-style:italic}
 .feed-content u{text-decoration:underline}
 .feed-content s{text-decoration:line-through}
-.feed-content a{color:var(--primary);text-decoration:underline;word-break:break-all}
-.feed-content a:hover{color:var(--primary-dark)}
+.feed-content a{color:var(--primary);text-decoration:none;border-bottom:1.5px solid #d0e6ff;transition:border-color .2s}
+.feed-content a:hover{border-color:var(--primary)}
 .feed-content img{
   max-width:100%;
   height:auto;
-  border-radius:var(--radius-sm);
+  border-radius:14px;
   margin:10px 0;
   display:block;
   background:#f3f4f6;
@@ -979,12 +1007,20 @@ img{max-width:100%;height:auto;display:block}
 <div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeModal()">
   <div class="modal-content">
     <div class="modal-header">
-      <h2 id="modalTitle">Chi tiết</h2>
+      <div style="flex:1;min-width:0">
+        <div class="modal-badge-row" id="modalBadgeRow"></div>
+        <h2 id="modalTitle">Chi tiết</h2>
+      </div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
+    <div class="modal-meta" id="modalMeta"></div>
     <div class="modal-body">
-      <div class="modal-meta" id="modalMeta"></div>
+      <div class="modal-divider"></div>
       <div id="modalContent"></div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-tag" id="modalFooterTag"></span>
+      <button class="modal-share-btn" onclick="copyFeedLink(currentModalId)">🔗 Chia sẻ</button>
     </div>
   </div>
 </div>
@@ -1511,6 +1547,8 @@ function filterExam(exam){
   renderSchedule(exam);
 }
 
+let currentModalId = null;
+
 // ══════════════════════════════════════════════════
 // DETAIL
 // ══════════════════════════════════════════════════
@@ -1520,29 +1558,33 @@ function openFeedDetail(id){
 
   // Set URL hash for sharing
   window.location.hash = id;
+  currentModalId = id;
 
-  // Title may contain HTML from rich text — strip for modal header
+  // Badge row
+  var badgeRowHtml = '';
+  if(item.badge){
+    var badgeClass = item.badgeType === 'hot' ? 'modal-badge-hot' : 'modal-badge-info';
+    badgeRowHtml = '<span class="' + badgeClass + '">' + escapeHtml(item.badge) + '</span>';
+  }
+  document.getElementById('modalBadgeRow').innerHTML = badgeRowHtml;
+
+  // Title (strip HTML for header)
   document.getElementById('modalTitle').textContent = stripHtml(item.title || 'Thông báo');
 
-  const badgeHtmlModal = item.badge
-    ? `<span class="feed-badge ${item.badgeType}" style="font-size:11px">${escapeHtml(item.badge)}</span>`
-    : '';
-  document.getElementById('modalMeta').innerHTML = `
-    <span>🕐 ${escapeHtml(item.time)}</span>
-    <span>📁 ${escapeHtml(item.category)}</span>
-    ${badgeHtmlModal}
-    <button onclick="copyFeedLink('${item.id}')" style="margin-left:auto;padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all var(--transition)"
-      onmouseover="this.style.background='var(--primary-light)';this.style.borderColor='var(--primary)'"
-      onmouseout="this.style.background='var(--bg)';this.style.borderColor='var(--line)'">🔗 Sao chép link</button>
-  `;
-  // Render content HTML with line breaks + auto-link URLs
+  // Meta line (time + category)
+  document.getElementById('modalMeta').innerHTML =
+    '<span>🕐 ' + escapeHtml(item.time) + '</span>' +
+    '<span>📁 ' + escapeHtml(item.category) + '</span>';
+
+  // Footer tag
+  document.getElementById('modalFooterTag').innerHTML = '📖 ' + escapeHtml(item.category);
+
+  // Render content HTML
   var desc = item.desc || '';
-  // Split by newlines, skip empty, apply formatContentHTML to each line
   var lines = desc.split('\n').filter(function(l){ return l.trim(); });
   if(desc.indexOf('<') >= 0 && desc.indexOf('>') >= 0){
-    // Already has HTML from rich text — render as-is with URL linking
+    // Rich text — render as-is with URL linking
     var html = formatContentHTML(desc);
-    // Replace newlines with <br>
     html = html.replace(/\n/g, '<br>');
     document.getElementById('modalContent').innerHTML = '<div class="feed-content" style="font-size:14px;line-height:1.8;color:var(--text)">' + html + '</div>';
   } else {
@@ -1556,13 +1598,12 @@ function openFeedDetail(id){
 }
 
 function copyFeedLink(id){
+  if(!id) return;
   // Build full URL with hash
   var url = window.location.origin + window.location.pathname + '#' + id;
   navigator.clipboard.writeText(url).then(function(){
-    // Flash the clicked element briefly
     showToast('Da sao chep link! ' + url.substring(url.lastIndexOf('#')), 2000);
   }).catch(function(){
-    // Fallback for older browsers
     showToast('Link: ' + url, 4000);
   });
 }
@@ -1589,21 +1630,22 @@ function closeModal(){
   }
 }
 function openScheduleDetail(subject, teacher, date, month, time){
+  currentModalId = null;
+  document.getElementById('modalBadgeRow').innerHTML = '<span class="modal-badge-info">📅 Lịch học</span>';
   document.getElementById('modalTitle').textContent = 'Thông tin buổi học';
-  document.getElementById('modalMeta').innerHTML = `
-    <span>📅 ${date}/${month}</span>
-    <span>⏰ ${time}</span>
-  `;
-  document.getElementById('modalContent').innerHTML = `
-    <p style="font-size:15px;font-weight:600;margin-bottom:8px">${escapeHtml(subject)}</p>
-    <p style="font-size:14px;color:var(--text-secondary)">👨‍🏫 ${escapeHtml(teacher)}</p>
-    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line-light)">
-      <a href="https://hocmai.vn/study/calendar" target="_blank" rel="noopener"
-         style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:8px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;text-decoration:none;transition:all var(--transition)"
-         onmouseover="this.style.background='#004a8f';this.style.transform='translateY(-1px)'"
-         onmouseout="this.style.background='var(--primary)';this.style.transform='none'">📅 Vào lịch học</a>
-    </div>
-  `;
+  document.getElementById('modalMeta').innerHTML =
+    '<span>📅 ' + date + '/' + month + '</span>' +
+    '<span>⏰ ' + time + '</span>';
+  document.getElementById('modalFooterTag').innerHTML = '👨‍🏫 ' + escapeHtml(teacher);
+  document.getElementById('modalContent').innerHTML =
+    '<p style="font-size:15px;font-weight:600;margin-bottom:8px">' + escapeHtml(subject) + '</p>' +
+    '<p style="font-size:14px;color:var(--text-secondary)">👨‍🏫 ' + escapeHtml(teacher) + '</p>' +
+    '<div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)">' +
+      '<a href="https://hocmai.vn/study/calendar" target="_blank" rel="noopener"' +
+         ' style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:12px;background:var(--primary);color:#fff;font-size:14px;font-weight:600;text-decoration:none;transition:all var(--transition)"' +
+         ' onmouseover="this.style.background=\'#004a8f\';this.style.transform=\'translateY(-1px)\'"' +
+         ' onmouseout="this.style.background=\'var(--primary)\';this.style.transform=\'none\'">📅 Vào lịch học</a>' +
+    '</div>';
   document.getElementById('detailModal').classList.add('show');
 }
 
