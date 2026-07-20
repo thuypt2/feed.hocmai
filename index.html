@@ -7,6 +7,7 @@
   <link rel="icon" type="image/png" href="Favicon HOCMAI.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════ RESET & VARIABLES ═══════════════════════════ */
@@ -978,9 +979,11 @@ img{max-width:100%;height:auto;display:block}
 </div>
 
 <script>// ══════════════════════════════════════════════════
-// DATA — loaded from API
+// DATA — loaded from Supabase
 // ══════════════════════════════════════════════════
-const API_URL = 'https://script.google.com/macros/s/AKfycbz73HKnzuubZYVQaharliKVIT9jUUu5IAnmBtv5FVLpjNyDFM3H4m370WHZns__ElAybw/exec';
+const SUPABASE_URL = 'https://xaxohdyscyxbamvtdjzw.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheG9oZHlzY3l4YmFtdnRkanp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NTkyMTAsImV4cCI6MjEwMDEzNTIxMH0.garOtg2u5-WzOC6XkQ_EzeTT_FNczcq7u0R28ee8SIo';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const SO_TAY_LABELS = [
   'Nội quy lớp học',
@@ -1177,46 +1180,23 @@ function stripHtml(html){
   return div.textContent || div.innerText || '';
 }
 
-// Auto-detect data start offset and skip duplicate header artifacts
-function getDataStart(arr, section) {
-  if (!arr || arr.length < 2) return 1;
-  // Old format: row[1] has empty string key ""
-  if (arr[1] && arr[1].hasOwnProperty('')) return 2;
-
-  // Skip rows where data values match the header row (duplicate header artifact from wrong rich text offset)
-  var start = 1;
-  while (start < arr.length) {
-    var row = arr[start];
-    var titleVal = row['Tiêu_đề'] || row['Tiêu đề'] || row['Tên bài giảng'] || null;
-    var headerTitle = arr[0]['Tiêu_đề'] || arr[0]['Tiêu đề'] || arr[0]['Tên bài giảng'] || '';
-    if (!titleVal) break;
-    // Strip HTML tags and compare
-    var clean = String(titleVal).replace(/<[^>]*>/g, '').trim();
-    if (clean !== headerTitle) break;
-    start++;
-  }
-  return start;
-}
-
 async function fetchAPIData(){
   try {
-    const resp = await fetch(API_URL);
-    const json = await resp.json();
-
     // === So_tay ===
-    if(json.So_tay && json.So_tay.length > 1){
-      const start = getDataStart(json.So_tay);
-      allSoTayLinks = json.So_tay.slice(start).map(function(row){
-        return row['Link'] || row['3'] || row[''] || '';
+    const { data: soTayData } = await supabase.from('so_tay').select('*');
+    if(soTayData && soTayData.length){
+      allSoTayLinks = soTayData.map(function(row){
+        return (row.link || row.tieu_de || '').trim();
       }).filter(function(u){ return u && u.startsWith('http'); });
     }
 
     // === _index (icon map) ===
     _indexIconMap = {};
-    if(json._index && Array.isArray(json._index)){
-      for(var j = 0; j < json._index.length; j++){
-        var r = json._index[j];
-        var loai = (r.Loai_TB || '').trim();
+    const { data: indexData } = await supabase.from('_index').select('*');
+    if(indexData && indexData.length){
+      for(var j = 0; j < indexData.length; j++){
+        var r = indexData[j];
+        var loai = (r.loai_tb || '').trim();
         var iconUrl = (r.icon || '').trim();
         if(loai && iconUrl){
           _indexIconMap[loai] = iconUrl;
@@ -1225,34 +1205,32 @@ async function fetchAPIData(){
     }
 
     // === Lich_hoc ===
-    if(json.Lich_hoc && json.Lich_hoc.length > 1){
-      const today = new Date();
-      today.setHours(0,0,0,0);
-      const cutoff = new Date(today);
-      cutoff.setDate(cutoff.getDate() + 2);
-      cutoff.setHours(23,59,59,999);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const cutoff = new Date(today);
+    cutoff.setDate(cutoff.getDate() + 2);
+    cutoff.setHours(23,59,59,999);
+    const todayISO = today.toISOString();
+    const cutoffISO = cutoff.toISOString();
 
+    const { data: lichData } = await supabase.from('lich_hoc')
+      .select('*')
+      .gte('ngay_live', todayISO)
+      .lte('ngay_live', cutoffISO)
+      .order('ngay_live', { ascending: true });
+
+    if(lichData && lichData.length){
       const seen = new Set();
       allScheduleData = [];
-      let start = getDataStart(json.Lich_hoc);
-      // Lich_hoc has a 2nd header row with numeric column mapping (e.g. Tên bài giảng = 3).
-      // Detect and skip it if present.
-      if (start < json.Lich_hoc.length) {
-        const r0 = json.Lich_hoc[start];
-        const testVal = r0['Tên bài giảng'] || r0['3'];
-        if (testVal === 3 || testVal === '3') start = start + 1;
-      }
-
-      for(let i = start; i < json.Lich_hoc.length; i++){
-        const row = json.Lich_hoc[i];
-        const bai   = row['Tên bài giảng'] || row['Tên_bài_giảng'] || row['3'] || '';
-        const gv    = row['Tên GV']  || row['Tên_GV']  || row['4'] || '';
-        const ngay  = row['Ngày live'] || row['Ngày_live'] || row['5'] || '';
-        const khung = row['Khung giờ'] || row['Khung_giờ'] || row['7'] || '';
-        const kyThi = row['Kỳ thi/Lớp'] || row['Kỳ_thi/Lớp'] || row['Kỳ thi'] || row['32'] || '';
+      for(let i = 0; i < lichData.length; i++){
+        const row = lichData[i];
+        const bai   = row.ten_bai_giang || '';
+        const gv    = row.ten_gv || '';
+        const ngay  = row.ngay_live || '';
+        const khung = row.khung_gio || '';
+        const kyThi = row.ky_thi_lop || '';
 
         if(!bai) continue;
-
         const date = parseDate(ngay);
         if(!date || date < today || date > cutoff) continue;
 
@@ -1261,7 +1239,6 @@ async function fetchAPIData(){
         seen.add(key);
 
         const time = khung ? String(khung).split('-')[0].trim() : '';
-
         allScheduleData.push({
           date: date.getDate(),
           month: String(date.getMonth()+1).padStart(2,'0'),
@@ -1279,26 +1256,25 @@ async function fetchAPIData(){
     }
 
     // === Ban_tin ===
-    if(json.Ban_tin && json.Ban_tin.length > 1){
+    const { data: feedData } = await supabase.from('ban_tin')
+      .select('*')
+      .order('ngay_dang', { ascending: false, nullsFirst: false });
+
+    if(feedData && feedData.length){
       allFeedData = [];
-      const start = getDataStart(json.Ban_tin);
+      for(let i = 0; i < feedData.length; i++){
+        const row = feedData[i];
+        const ngayDang  = row.ngay_dang || '';
+        const tieuDe    = row.tieu_de || '';
+        const noiDung   = row.noi_dung || '';
+        const isHot     = (row.section || '') === 'Tin hot';
+        const kyThi     = row.ky_thi || '';
+        const giaiDoan  = row.giai_doan || '';
+        const mucDo     = row.muc_do || '';
+        const loaiTB    = row.loai_tb || '';
 
-      for(let i = start; i < json.Ban_tin.length; i++){
-        const row = json.Ban_tin[i];
-        // Support both underscore and space key formats
-        const ngayDang  = row['Ngày_đăng']  || row['Ngày đăng']  || row['1'] || '';
-        const tieuDe    = row['Tiêu_đề']    || row['Tiêu đề']    || row['3'] || '';
-        const noiDung   = row['Nội_dung']   || row['Nội dung']   || row['4'] || '';
-        const isHot     = (row['Thumnail'] || row['Section'] || row['5'] || '') === 'Tin hot';
-        const kyThi     = row['Ky_thi']     || row['Kỳ thi']     || row['9'] || '';
-        const giaiDoan  = row['Giai_doan']  || row['Giai đoạn']  || row['10'] || '';
-        const mucDo     = row['Muc_do']     || row['Mức độ']     || row['12'] || '';
-        const loaiTB    = row['Loai_TB']    || row['Loại TB']    || row['8']  || '';
-
-        // Skip truly empty rows
         if(!tieuDe && !noiDung) continue;
 
-        // Normalize mucDo (support variants without diacritics / short forms)
         const mucDoNorm = String(mucDo || '').trim();
         const mucDoKey = (
           mucDoNorm === 'Quan trong' ? 'Quan trọng' :
@@ -1306,14 +1282,12 @@ async function fetchAPIData(){
           mucDoNorm === 'Khan cap' || mucDoNorm === 'Khẩn' ? 'Khẩn cấp' :
           mucDoNorm
         );
-        // Prefer icon from _index sheet (column H) matched by Loai_TB (column B)
         let icon = _indexIconMap[loaiTB] || '';
         let iconType = icon ? 'custom' : (FEED_ICON_MAP[mucDoKey] || FEED_ICON_MAP[mucDoNorm] || FEED_ICON_MAP['']).type;
         if (!icon) {
           icon = (FEED_ICON_MAP[mucDoKey] || FEED_ICON_MAP[mucDoNorm] || FEED_ICON_MAP['']).icon;
         }
 
-        // Format date
         let timeStr = 'Mới cập nhật';
         let sortTs = 0;
         if(ngayDang) {
@@ -1342,15 +1316,13 @@ async function fetchAPIData(){
           isHot: isHot
         });
       }
-
-      // Newest first (rows without date keep relative sheet order via index fallback)
       allFeedData.sort(function(a, b){
         if(b.sortTs !== a.sortTs) return b.sortTs - a.sortTs;
         return 0;
       });
     }
   } catch(e){
-    console.error('API fetch error:', e);
+    console.error('Supabase fetch error:', e);
   }
 }
 
