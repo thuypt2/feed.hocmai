@@ -692,65 +692,7 @@ img{max-width:100%;height:auto;display:block}
   font-weight:400;
 }
 
-/* ═══════════════════════════ BOTTOM NAV (MOBILE) ═══════════════════════════ */
-.bottom-nav{
-  display:none;
-  position:fixed;
-  bottom:0;left:0;right:0;
-  height:64px;
-  background:var(--white);
-  border-top:1px solid var(--line-light);
-  z-index:1000;
-  padding:0 8px;
-  box-shadow:0 -2px 10px rgba(0,0,0,.04);
-}
-.bottom-nav-inner{
-  display:flex;
-  align-items:center;
-  justify-content:space-around;
-  height:100%;
-  max-width:480px;
-  margin:auto;
-}
-.nav-item{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:2px;
-  padding:4px 12px;
-  border-radius:var(--radius-sm);
-  cursor:pointer;
-  text-decoration:none;
-  transition:all var(--transition);
-  position:relative;
-  border:none;
-  background:transparent;
-  color:var(--text-muted);
-  font-family:var(--font);
-}
-.nav-item .ni-icon{
-  font-size:22px;
-  line-height:1;
-}
-.nav-item .ni-label{
-  font-size:10px;
-  font-weight:500;
-}
-.nav-item.active{color:var(--primary)}
-.nav-item .ni-badge{
-  position:absolute;
-  top:0;right:2px;
-  min-width:16px;height:16px;
-  border-radius:8px;
-  background:var(--red);
-  color:#fff;
-  font-size:9px;
-  font-weight:700;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:2px solid var(--white);
-}
+
 
 /* ═══════════════════════════ MODAL (detail popup) ═══════════════════════════ */
 .modal-overlay{
@@ -884,7 +826,7 @@ img{max-width:100%;height:auto;display:block}
   .banner-slide{padding:28px 24px;flex-direction:column;text-align:center}
   .banner-text{max-width:100%}
   .banner-illustration{margin:16px 0 0;width:140px;height:120px;font-size:48px}
-  .bottom-nav{display:block}
+
 }
 @media(max-width:768px){
   .content-grid{grid-template-columns:1fr;gap:20px}
@@ -1008,33 +950,6 @@ img{max-width:100%;height:auto;display:block}
     </div><!-- /content-grid -->
   </main>
 </div><!-- /layout -->
-
-<!-- ═══════ BOTTOM NAV (mobile) ═══════ -->
-<nav class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <button class="nav-item active" onclick="location.href='#'">
-      <span class="ni-icon">🏠</span>
-      <span class="ni-label">Trang chủ</span>
-    </button>
-    <button class="nav-item" onclick="location.href='#'">
-      <span class="ni-icon">📈</span>
-      <span class="ni-label">Lộ trình</span>
-    </button>
-    <button class="nav-item" onclick="location.href='#'">
-      <span class="ni-icon">🔔</span>
-      <span class="ni-label">Feed</span>
-      <span class="ni-badge">3</span>
-    </button>
-    <button class="nav-item" onclick="location.href='#'">
-      <span class="ni-icon">👥</span>
-      <span class="ni-label">Cộng đồng</span>
-    </button>
-    <button class="nav-item" onclick="location.href='#'">
-      <span class="ni-icon">👤</span>
-      <span class="ni-label">Cá nhân</span>
-    </button>
-  </div>
-</nav>
 
 <!-- ═══════ MODAL ═══════ -->
 <div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeModal()">
