@@ -70,7 +70,7 @@ def fetch_api_data():
 def clear_table(table):
     """Xóa toàn bộ dữ liệu cũ trong bảng"""
     print(f"🧹 Đang xóa dữ liệu cũ trong {table}...")
-    status, body = supabase_request("DELETE", table, params={"not": json.dumps({"id": "is.null"})})
+    status, body = supabase_request("DELETE", table, params={"id": "gt.0"})
     print(f"   {'✅' if status < 300 else '⚠️'} {table}: HTTP {status}")
     return status < 300
 
@@ -215,9 +215,9 @@ def main():
     # Step 1: Fetch data
     data = fetch_api_data()
 
-    # Step 2: Bỏ qua clear table (bảng mới tạo đã rỗng)
-    # for table in ["ban_tin", "lich_hoc", "so_tay", "_index"]:
-    #     clear_table(table)
+    # Step 2: Clear old data before re-import
+    for table in ["ban_tin", "lich_hoc", "so_tay", "_index"]:
+        clear_table(table)
 
     # Step 3: Import
     ok = True
