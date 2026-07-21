@@ -437,11 +437,12 @@ img{max-width:100%;height:auto;display:block}
 .feed-like-btn{
   display:flex;align-items:center;gap:3px;
   font-size:13px;color:var(--text-muted);
-  cursor:pointer;padding:4px 6px;border-radius:8px;
+  cursor:pointer;padding:6px 10px;border-radius:8px;
   transition:all var(--transition);flex-shrink:0;
   user-select:none;border:none;background:none;
   font-family:var(--font);
   touch-action:manipulation;
+  min-width:44px;min-height:36px;
 }
 .feed-card:hover .feed-like-btn{opacity:1}
 .feed-like-btn:hover{background:var(--red-light);color:var(--red)}
@@ -968,7 +969,7 @@ img{max-width:100%;height:auto;display:block}
       <div id="modalContent"></div>
     </div>
     <div class="modal-footer">
-      <button class="modal-like-inline" id="modalLikeBtn" onclick="event.preventDefault();event.stopPropagation();toggleLike(currentModalId)" title="Thích bài viết này"><span class="ml-icon">♡</span><span class="ml-count">0</span></button>
+      <button class="modal-like-inline" id="modalLikeBtn" onclick="(function(e){e.preventDefault();e.stopPropagation();toggleLike(currentModalId)})(event)" title="Thích bài viết này"><span class="ml-icon">♡</span><span class="ml-count">0</span></button>
       <span class="modal-footer-tag" id="modalFooterTag"></span>
       <div class="modal-share-wrap">
         <span class="modal-share-prompt">Chia sẻ ngay cho bạn bè thông tin hữu ích này nhé! ⭐</span>
@@ -1386,7 +1387,7 @@ function renderFeed(){
       '\n            <span class="feed-category">' + escapeHtml(item.category) + '</span>' +
       '\n          </div>' +
       '\n        </div>' +
-      '\n        <button type="button" class="feed-like-btn" id="like-btn-' + item.id + '" onclick="event.preventDefault();event.stopPropagation();toggleLike(\'' + item.id + '\')" title="Thich bai viet nay"><span class="like-icon">♡</span><span class="like-count">0</span></button>' +
+      '\n        <button type="button" class="feed-like-btn" id="like-btn-' + item.id + '" onclick="(function(e){e.preventDefault();e.stopPropagation();toggleLike(\'' + item.id + '\')})(event)" title="Thich bai viet nay"><span class="like-icon">♡</span><span class="like-count">0</span></button>' +
       '\n        <span class="feed-link-copy" title="Copy link" onclick="event.stopPropagation();copyFeedLink(\'' + item.id + '\')">🔗</span>' +
       '\n        <span class="feed-arrow">›</span>' +
       '\n      </div>';
