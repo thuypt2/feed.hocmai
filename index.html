@@ -442,6 +442,7 @@ img{max-width:100%;height:auto;display:block}
   transition:all var(--transition);flex-shrink:0;
   user-select:none;border:none;background:none;
   font-family:var(--font);
+  touch-action:manipulation;
 }
 .feed-card:hover .feed-like-btn{opacity:1}
 .feed-like-btn:hover{background:var(--red-light);color:var(--red)}
@@ -968,7 +969,7 @@ img{max-width:100%;height:auto;display:block}
       <div id="modalContent"></div>
     </div>
     <div class="modal-footer">
-      <button class="modal-like-inline" id="modalLikeBtn" onclick="event.stopPropagation();toggleLike(currentModalId)" title="Thích bài viết này"><span class="ml-icon">♡</span><span class="ml-count">0</span></button>
+      <button class="modal-like-inline" id="modalLikeBtn" onclick="event.preventDefault();event.stopPropagation();toggleLike(currentModalId)" title="Thích bài viết này"><span class="ml-icon">♡</span><span class="ml-count">0</span></button>
       <span class="modal-footer-tag" id="modalFooterTag"></span>
       <div class="modal-share-wrap">
         <span class="modal-share-prompt">Chia sẻ ngay cho bạn bè thông tin hữu ích này nhé! ⭐</span>
@@ -1265,8 +1266,8 @@ async function fetchAPIData(){
       for(let i = 0; i < feedData.length; i++){
         const row = feedData[i];
         const ngayDang  = row.ngay_dang || '';
-        const tieuDe    = row.tieu_de || '';
-        const noiDung   = row.noi_dung || '';
+        const tieuDe    = (row.tieu_de || '').trim();
+        const noiDung   = (row.noi_dung || '').trim();
         const isHot     = (row.section || '') === 'Tin hot';
         const kyThi     = row.ky_thi || '';
         const giaiDoan  = row.giai_doan || '';
@@ -1274,6 +1275,8 @@ async function fetchAPIData(){
         const loaiTB    = row.loai_tb || '';
 
         if(!tieuDe && !noiDung) continue;
+        // Skip rows with no content body — title-only posts are meaningless
+        if(!noiDung) continue;
 
         const mucDoNorm = String(mucDo || '').trim();
         const mucDoKey = (
@@ -1366,7 +1369,7 @@ function renderFeed(){
       '\n            <span class="feed-category">' + escapeHtml(item.category) + '</span>' +
       '\n          </div>' +
       '\n        </div>' +
-      '\n        <button class="feed-like-btn" id="like-btn-' + item.id + '" onclick="event.stopPropagation();toggleLike(\'' + item.id + '\')" title="Thich bai viet nay"><span class="like-icon">♡</span><span class="like-count">0</span></button>' +
+      '\n        <button type="button" class="feed-like-btn" id="like-btn-' + item.id + '" onclick="event.preventDefault();event.stopPropagation();toggleLike(\'' + item.id + '\')" title="Thich bai viet nay"><span class="like-icon">♡</span><span class="like-count">0</span></button>' +
       '\n        <span class="feed-link-copy" title="Copy link" onclick="event.stopPropagation();copyFeedLink(\'' + item.id + '\')">🔗</span>' +
       '\n        <span class="feed-arrow">›</span>' +
       '\n      </div>';
