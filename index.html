@@ -7,7 +7,6 @@
   <link rel="icon" type="image/png" href="Favicon HOCMAI.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════ RESET & VARIABLES ═══════════════════════════ */
@@ -984,7 +983,24 @@ img{max-width:100%;height:auto;display:block}
 // ══════════════════════════════════════════════════
 const SUPABASE_URL = 'https://xaxohdyscyxbamvtdjzw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheG9oZHlzY3l4YmFtdnRkanp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NTkyMTAsImV4cCI6MjEwMDEzNTIxMH0.garOtg2u5-WzOC6XkQ_EzeTT_FNczcq7u0R28ee8SIo';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Direct REST API helper — avoids Supabase JS SDK dependency issues
+async function supabaseQuery(table, query) {
+  let url = SUPABASE_URL + '/rest/v1/' + table;
+  if (query) url += '?' + query;
+  const resp = await fetch(url, {
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json'
+    }
+  });
+  if (!resp.ok) {
+    const err = await resp.text();
+    throw new Error('Supabase ' + table + ': ' + resp.status + ' ' + err);
+  }
+  return resp.json();
+}
 
 const SO_TAY_LABELS = [
   'Nội quy lớp học',
@@ -1184,7 +1200,7 @@ function stripHtml(html){
 async function fetchAPIData(){
   try {
     // === So_tay ===
-    const { data: soTayData } = await supabase.from('so_tay').select('*');
+    const soTayData = await supabaseQuery('so_tay', 'select=*');
     if(soTayData && soTayData.length){
       allSoTayLinks = soTayData.map(function(row){
         return (row.link || row.tieu_de || '').trim();
@@ -1193,7 +1209,7 @@ async function fetchAPIData(){
 
     // === _index (icon map) ===
     _indexIconMap = {};
-    const { data: indexData } = await supabase.from('_index').select('*');
+    const indexData = await supabaseQuery('_index', 'select=*');
     if(indexData && indexData.length){
       for(var j = 0; j < indexData.length; j++){
         var r = indexData[j];
@@ -1214,11 +1230,11 @@ async function fetchAPIData(){
     const todayISO = today.toISOString();
     const cutoffISO = cutoff.toISOString();
 
-    const { data: lichData } = await supabase.from('lich_hoc')
-      .select('*')
-      .gte('ngay_live', todayISO)
-      .lte('ngay_live', cutoffISO)
-      .order('ngay_live', { ascending: true });
+    const lichData = await supabaseQuery('lich_hoc',
+      'select=*'
+      + '&ngay_live=gte.' + encodeURIComponent(todayISO)
+      + '&ngay_live=lte.' + encodeURIComponent(cutoffISO)
+      + '&order=ngay_live.asc');
 
     if(lichData && lichData.length){
       const seen = new Set();
@@ -1257,9 +1273,9 @@ async function fetchAPIData(){
     }
 
     // === Ban_tin ===
-    const { data: feedData } = await supabase.from('ban_tin')
-      .select('*')
-      .order('ngay_dang', { ascending: false, nullsFirst: false });
+    const feedData = await supabaseQuery('ban_tin',
+      'select=*'
+      + '&order=ngay_dang.desc.nullsfirst');
 
     if(feedData && feedData.length){
       allFeedData = [];
@@ -1326,6 +1342,7 @@ async function fetchAPIData(){
     }
   } catch(e){
     console.error('Supabase fetch error:', e);
+    throw e; // re-throw so init handler can display the error
   }
 }
 
@@ -1690,24 +1707,30 @@ function escapeHtml(str){
 // INIT
 // ══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
-  // Show loading state
-  renderFeed();
-  renderSchedule('all');
+  try {
+    // Show loading state
+    renderFeed();
+    renderSchedule('all');
 
-  // Fetch real data
-  await fetchAPIData();
-  feedDataReady = true;
+    // Fetch real data
+    await fetchAPIData();
+    feedDataReady = true;
 
-  // Re-render with real data
-  renderFeed();
-  initAllLikes();
-  renderSoTay();
-  renderSchedule(currentExamFilter);
+    // Re-render with real data
+    renderFeed();
+    initAllLikes();
+    renderSoTay();
+    renderSchedule(currentExamFilter);
 
-  // Auto-open from URL hash (share link)
-  var hash = window.location.hash.replace('#', '');
-  if(hash && allFeedData.length > 0){
-    setTimeout(function(){ openFeedDetail(hash); }, 100);
+    // Auto-open from URL hash (share link)
+    var hash = window.location.hash.replace('#', '');
+    if(hash && allFeedData.length > 0){
+      setTimeout(function(){ openFeedDetail(hash); }, 100);
+    }
+  } catch(e) {
+    console.error('Init error:', e);
+    var el = document.getElementById('feedList');
+    if(el) el.innerHTML = '<div style=\"padding:40px;text-align:center;color:#c00;font-size:16px\">Lỗi khởi tạo: ' + (e.message || String(e)) + '<br><small>Vui lòng thử lại sau</small></div>';
   }
 });
 </script>
