@@ -50,6 +50,31 @@ def clean_datetime(val):
         return None
     return val  # Supabase chấp nhận ISO string
 
+def _parse_bool(val):
+    """Chuyển đổi giá trị TRUE/FALSE từ Google Sheet sang boolean"""
+    if val is None:
+        return True  # Mặc định là TRUE (hiển thị)
+    s = str(val).strip().upper()
+    if s in ('TRUE', '1', 'YES', 'CÓ', 'CO'):
+        return True
+    if s in ('FALSE', '0', 'NO', 'KHÔNG', 'KHONG'):
+        return False
+    return True  # Mặc định TRUE
+
+def parse_date_dmy(val):
+    """Chuyển đổi DD/MM/YYYY → ISO YYYY-MM-DD, trả về None nếu không hợp lệ"""
+    val = clean_text(val)
+    if not val:
+        return None
+    parts = val.split('/')
+    if len(parts) == 3:
+        try:
+            d, m, y = int(parts[0]), int(parts[1]), int(parts[2])
+            return f"{y:04d}-{m:02d}-{d:02d}"
+        except ValueError:
+            pass
+    return val  # Trả về nguyên bản nếu không parse được
+
 
 def fetch_api_data():
     """Lấy toàn bộ dữ liệu từ Apps Script API"""
@@ -96,6 +121,8 @@ def import_ban_tin(rows):
             "muc_do": clean_text(row.get("Muc_do") or row.get("Mức độ")),
             "start_time": clean_datetime(row.get("Start_time")) or None,
             "end_time": clean_datetime(row.get("End_Time")) or None,
+            "hashtag": clean_text(row.get("hashtag") or row.get("Hashtag") or row.get("Hash_tag") or ""),
+            "xuat_ban": _parse_bool(row.get("Xuất bản") or row.get("Xuất_bản") or row.get("Xuat_ban") or row.get("xuat_ban")),
         }
 
         data_rows.append(item)
@@ -132,7 +159,7 @@ def import_lich_hoc(rows):
         item = {
             "ten_bai_giang": clean_text(row.get("Tên bài giảng") or row.get("3")),
             "ten_gv": clean_text(row.get("Tên GV") or row.get("4") or ""),
-            "ngay_live": clean_datetime(row.get("Ngày live") or row.get("5")),
+            "ngay_live": parse_date_dmy(row.get("Ngày live") or row.get("5")),
             "khung_gio": clean_text(row.get("Khung giờ") or row.get("7") or ""),
             "ky_thi_lop": clean_text(row.get("Kỳ thi/Lớp") or row.get("32") or "All"),
         }

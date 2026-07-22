@@ -411,6 +411,17 @@ img{max-width:100%;height:auto;display:block}
   text-transform:uppercase;
   letter-spacing:.3px;
 }
+.feed-hashtag{
+  display:inline-flex;
+  align-items:center;
+  gap:2px;
+  font-size:10px;
+  font-weight:500;
+  color:#1d9bf0;
+  background:#e8f5fd;
+  padding:2px 8px;
+  border-radius:4px;
+}
 .feed-arrow{
   color:var(--line);
   font-size:18px;
@@ -925,8 +936,7 @@ img{max-width:100%;height:auto;display:block}
           </div>
           <div style="padding:0 16px 8px;display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line-light)" id="examFilters">
             <button class="exam-filter active" data-exam="all" onclick="filterExam('all')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--primary);color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">Tất cả</button>
-            <button class="exam-filter" data-exam="hsa" onclick="filterExam('hsa')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">HSA</button>
-            <button class="exam-filter" data-exam="qda" onclick="filterExam('qda')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">QDA</button>
+            <button class="exam-filter" data-exam="hsaqda" onclick="filterExam('hsaqda')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">HSA/QDA</button>
             <button class="exam-filter" data-exam="tsa" onclick="filterExam('tsa')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">TSA</button>
             <button class="exam-filter" data-exam="vact" onclick="filterExam('vact')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">V-ACT</button>
             <button class="exam-filter" data-exam="tnthpt" onclick="filterExam('tnthpt')" style="padding:5px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--white);color:var(--text-secondary);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition)">TN THPT</button>
@@ -1015,8 +1025,7 @@ const SO_TAY_ICONS = ['📜','▶️','💬','📨','📈'];
 
 const EXAM_MAP = {
   'All': 'all',
-  'HSA': 'hsa',
-  'QDA': 'qda',
+  'HSA/QDA': 'hsaqda',
   'TSA': 'tsa',
   'V-ACT': 'vact',
   'TN THPT': 'tnthpt',
@@ -1082,18 +1091,21 @@ function getExamKey(examStr){
 function getExamKeys(examStr){
   if(!examStr) return ['all'];
   var s = String(examStr).toUpperCase().trim();
-  if(s === 'ALL' || s === '') return ['all','hsa','qda','tsa','vact','tnthpt'];
+  if(s === 'ALL' || s === '') return ['all','hsaqda','tsa','vact','tnthpt'];
   var keys = [];
+  var hasHsa = false, hasQda = false;
   var parts = s.split(/[,;\/]+/);
   for(var p = 0; p < parts.length; p++){
     var t = parts[p].trim();
     if(t === 'TN THPT' || t === 'TNTHPT') keys.push('tnthpt');
-    else if(t === 'HSA') keys.push('hsa');
-    else if(t === 'QDA') keys.push('qda');
+    else if(t === 'HSA') { hasHsa = true; }
+    else if(t === 'QDA') { hasQda = true; }
     else if(t === 'TSA') keys.push('tsa');
     else if(t === 'V-ACT' || t === 'VACT') keys.push('vact');
     else keys.push(t.toLowerCase());
   }
+  // Merge HSA and QDA into hsaqda
+  if(hasHsa || hasQda) keys.push('hsaqda');
   if(keys.length === 0) keys.push('all');
   return keys;
 }
@@ -1273,9 +1285,10 @@ async function fetchAPIData(){
       });
     }
 
-    // === Ban_tin ===
+    // === Ban_tin (only published: xuat_ban = TRUE) ===
     const feedData = await supabaseQuery('ban_tin',
       'select=*'
+      + '&xuat_ban=is.true'
       + '&order=ngay_dang.desc.nullsfirst');
 
     if(feedData && feedData.length){
@@ -1290,6 +1303,7 @@ async function fetchAPIData(){
         const giaiDoan  = row.giai_doan || '';
         const mucDo     = row.muc_do || '';
         const loaiTB    = row.loai_tb || '';
+        const hashtag   = row.hashtag || '';
 
         if(!tieuDe && !noiDung) continue;
         // Skip rows with no content body — title-only posts are meaningless
@@ -1328,6 +1342,7 @@ async function fetchAPIData(){
           iconType: iconType,
           title: tieuDe || 'Thông báo',
           desc: noiDung || '',
+          hashtag: hashtag,
           time: timeStr,
           sortTs: sortTs || i,
           badge: mucDoKey || mucDoNorm || '',
@@ -1376,6 +1391,7 @@ function renderFeed(){
     var shortDesc = escapeHtml(plainDesc).substring(0, 140);
     var hasMore = plainDesc.length > 200 || (rawDesc !== plainDesc);
     var plainTitle = stripHtml(item.title || 'Thông báo').replace(/\s+/g, ' ').trim();
+    var hashtagHtml = item.hashtag ? '<span class="feed-hashtag">#' + escapeHtml(item.hashtag) + '</span>' : '';
     return '\n      <div class="feed-card" onclick="openFeedDetail(\'' + item.id + '\')">' +
       '\n        <div class="feed-icon ' + item.iconType + '">' + (item.icon && (item.icon.indexOf('http')===0||item.icon.indexOf('/')===0||item.icon.indexOf('.')===0) ? '<img src="'+item.icon+'" alt="">' : item.icon) + '</div>' +
       '\n        <div class="feed-body">' +
@@ -1384,6 +1400,7 @@ function renderFeed(){
       '\n          <div class="feed-meta">' +
       '\n            <span class="feed-time">🕐 ' + escapeHtml(item.time) + '</span>' +
       '\n            ' + badgeHtml +
+      '\n            ' + hashtagHtml +
       '\n            <span class="feed-category">' + escapeHtml(item.category) + '</span>' +
       '\n          </div>' +
       '\n        </div>' +
@@ -1515,6 +1532,9 @@ function openFeedDetail(id){
   if(item.badge){
     var badgeClass = item.badgeType === 'hot' ? 'modal-badge-hot' : 'modal-badge-info';
     badgeRowHtml = '<span class="' + badgeClass + '">' + escapeHtml(item.badge) + '</span>';
+  }
+  if(item.hashtag){
+    badgeRowHtml += ' <span style="display:inline-flex;align-items:center;gap:2px;font-size:10.5px;font-weight:500;color:#1d9bf0;background:#e8f5fd;padding:3px 10px;border-radius:6px;text-transform:none;letter-spacing:.3px">#' + escapeHtml(item.hashtag) + '</span>';
   }
   document.getElementById('modalBadgeRow').innerHTML = badgeRowHtml;
 

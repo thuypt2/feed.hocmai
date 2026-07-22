@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS ban_tin (
   giai_doan   TEXT DEFAULT '',
   lo_trinh    TEXT DEFAULT 'All',
   muc_do      TEXT DEFAULT 'Cần biết',
+  hashtag     TEXT DEFAULT '',
+  xuat_ban    BOOLEAN DEFAULT TRUE,
   created_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
