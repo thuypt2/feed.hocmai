@@ -469,6 +469,59 @@ img{max-width:100%;height:auto;display:block}
 }
 
 /* Quick Access */
+.search-section{
+  background:var(--white);
+  border-radius:var(--radius);
+  border:1px solid var(--line-light);
+  padding:12px 16px;
+}
+.search-section input{
+  width:100%;
+  padding:10px 14px 10px 38px;
+  border:1.5px solid var(--line);
+  border-radius:10px;
+  font-size:13px;
+  font-family:var(--font);
+  color:var(--text);
+  outline:none;
+  transition:border-color var(--transition);
+  background:var(--bg);
+}
+.search-section input:focus{border-color:var(--primary);background:var(--white)}
+.search-wrap{position:relative}
+.search-wrap .search-icon{
+  position:absolute;
+  left:12px;top:50%;
+  transform:translateY(-50%);
+  font-size:14px;color:var(--text-muted);
+  pointer-events:none;
+}
+.search-clear{
+  position:absolute;
+  right:10px;top:50%;
+  transform:translateY(-50%);
+  background:none;border:none;
+  font-size:14px;color:var(--text-muted);
+  cursor:pointer;padding:4px;
+  display:none;
+  line-height:1;
+}
+.search-clear.visible{display:block}
+.search-hint{
+  font-size:10px;color:var(--text-muted);
+  margin-top:6px;text-align:center;
+}
+/* Mobile search — hidden on desktop, shown below banner */
+.mobile-search{display:none}
+@media(max-width:768px){
+  .mobile-search{display:block;margin-bottom:16px}
+  .desktop-search{display:none}
+}
+@media(min-width:769px){
+  .mobile-search{display:none !important}
+  .desktop-search{display:block}
+}
+
 .quick-section{
   background:var(--white);
   border-radius:var(--radius);
@@ -893,6 +946,15 @@ img{max-width:100%;height:auto;display:block}
         <img src="banner ban tin.png" alt="Banner Bản tin TopUni" style="width:100%;border-radius:var(--radius);display:block">
       </section>
 
+      <!-- Mobile search (only visible ≤768px) -->
+      <div class="mobile-search search-section">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchMobile" placeholder="Tìm theo từ khóa, hashtag..." oninput="onSearch(this.value)">
+          <button class="search-clear" id="searchClearMobile" onclick="clearSearch()">✕</button>
+        </div>
+      </div>
+
       <!-- ═══════ LEFT COL — FEED ═══════ -->
       <div class="feed-left-col" style="display:flex;flex-direction:column;gap:20px">
       <!-- Tin hot -->
@@ -918,6 +980,15 @@ img{max-width:100%;height:auto;display:block}
 
       <!-- ═══════ RIGHT COL ═══════ -->
       <div class="right-col">
+
+        <!-- Desktop search (hidden ≤768px) -->
+        <div class="search-section desktop-search">
+          <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchDesktop" placeholder="Tìm theo từ khóa, hashtag..." oninput="onSearch(this.value)">
+            <button class="search-clear" id="searchClearDesktop" onclick="clearSearch()">✕</button>
+          </div>
+        </div>
 
         <!-- SỔ TAY HỌC VIÊN -->
         <div class="quick-section">
@@ -1055,6 +1126,7 @@ let _indexIconMap = {}; // Loai_TB -> icon URL
 let currentExamFilter = 'all';
 let scheduleExpanded = false;
 let feedDataReady = false;
+let currentSearchTerm = '';
 const SCHEDULE_MAX_PREVIEW = 3;
 
 // ══════════════════════════════════════════════════
@@ -1365,18 +1437,19 @@ async function fetchAPIData(){
 // ══════════════════════════════════════════════════
 // RENDER
 // ══════════════════════════════════════════════════
-function renderFeed(){
+function renderFeed(filteredData){
+  const data = filteredData || allFeedData;
   const hotList = document.getElementById('feedHotList');
   const newList = document.getElementById('feedList');
 
-  if(allFeedData.length === 0){
+  if(data.length === 0){
     hotList.innerHTML = '';
-    newList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:14px">Dang tai du lieu...</div>';
+    newList.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:14px">' + (currentSearchTerm ? 'Không tìm thấy bài viết nào cho "' + escapeHtml(currentSearchTerm) + '"' : 'Đang tải dữ liệu...') + '</div>';
     return;
   }
 
-  const hotData = allFeedData.filter(function(item){ return item.isHot; });
-  const newData = allFeedData.filter(function(item){ return !item.isHot; });
+  const hotData = data.filter(function(item){ return item.isHot; });
+  const newData = data.filter(function(item){ return !item.isHot; });
 
   function buildCard(item){
     const badgeHtml = item.badge
@@ -1391,7 +1464,8 @@ function renderFeed(){
     var shortDesc = escapeHtml(plainDesc).substring(0, 140);
     var hasMore = plainDesc.length > 200 || (rawDesc !== plainDesc);
     var plainTitle = stripHtml(item.title || 'Thông báo').replace(/\s+/g, ' ').trim();
-    var hashtagHtml = item.hashtag ? '<span class="feed-hashtag">#' + escapeHtml(item.hashtag) + '</span>' : '';
+    var hashtagTag = (item.hashtag || '').replace(/^#+/, '');
+    var hashtagHtml = hashtagTag ? '<span class="feed-hashtag">#' + escapeHtml(hashtagTag) + '</span>' : '';
     return '\n      <div class="feed-card" onclick="openFeedDetail(\'' + item.id + '\')">' +
       '\n        <div class="feed-icon ' + item.iconType + '">' + (item.icon && (item.icon.indexOf('http')===0||item.icon.indexOf('/')===0||item.icon.indexOf('.')===0) ? '<img src="'+item.icon+'" alt="">' : item.icon) + '</div>' +
       '\n        <div class="feed-body">' +
@@ -1495,6 +1569,61 @@ function toggleScheduleExpand(){
   renderSchedule(currentExamFilter);
 }
 
+// ══════════════════════════════════════════════════
+// SEARCH
+// ══════════════════════════════════════════════════
+function onSearch(value){
+  currentSearchTerm = (value || '').trim();
+  // Sync both inputs
+  var d = document.getElementById('searchDesktop');
+  var m = document.getElementById('searchMobile');
+  if(d && d !== document.activeElement) d.value = value;
+  if(m && m !== document.activeElement) m.value = value;
+  // Toggle clear buttons
+  var hasText = currentSearchTerm.length > 0;
+  var cd = document.getElementById('searchClearDesktop');
+  var cm = document.getElementById('searchClearMobile');
+  if(cd) cd.classList.toggle('visible', hasText);
+  if(cm) cm.classList.toggle('visible', hasText);
+  // Filter and render
+  filterAndRenderFeed();
+}
+function clearSearch(){
+  currentSearchTerm = '';
+  var d = document.getElementById('searchDesktop');
+  var m = document.getElementById('searchMobile');
+  if(d){ d.value = ''; }
+  if(m){ m.value = ''; }
+  var cd = document.getElementById('searchClearDesktop');
+  var cm = document.getElementById('searchClearMobile');
+  if(cd) cd.classList.remove('visible');
+  if(cm) cm.classList.remove('visible');
+  renderFeed();
+  initAllLikes();
+}
+function filterAndRenderFeed(){
+  if(!currentSearchTerm){
+    renderFeed();
+    initAllLikes();
+    return;
+  }
+  var q = currentSearchTerm.toLowerCase();
+  var filtered = allFeedData.filter(function(item){
+    // Search in title
+    var title = stripHtml(item.title || '').toLowerCase();
+    if(title.indexOf(q) >= 0) return true;
+    // Search in desc
+    var desc = stripHtml(item.desc || '').toLowerCase();
+    if(desc.indexOf(q) >= 0) return true;
+    // Search in hashtag
+    var ht = (item.hashtag || '').toLowerCase();
+    if(ht.indexOf(q) >= 0) return true;
+    return false;
+  });
+  renderFeed(filtered);
+  initAllLikes();
+}
+
 function filterExam(exam){
   currentExamFilter = exam;
   scheduleExpanded = false;
@@ -1534,7 +1663,8 @@ function openFeedDetail(id){
     badgeRowHtml = '<span class="' + badgeClass + '">' + escapeHtml(item.badge) + '</span>';
   }
   if(item.hashtag){
-    badgeRowHtml += ' <span style="display:inline-flex;align-items:center;gap:2px;font-size:10.5px;font-weight:500;color:#1d9bf0;background:#e8f5fd;padding:3px 10px;border-radius:6px;text-transform:none;letter-spacing:.3px">#' + escapeHtml(item.hashtag) + '</span>';
+    var ht = String(item.hashtag).replace(/^#+/, '');
+    if(ht) badgeRowHtml += ' <span style="display:inline-flex;align-items:center;gap:2px;font-size:10.5px;font-weight:500;color:#1d9bf0;background:#e8f5fd;padding:3px 10px;border-radius:6px;text-transform:none;letter-spacing:.3px">#' + escapeHtml(ht) + '</span>';
   }
   document.getElementById('modalBadgeRow').innerHTML = badgeRowHtml;
 
