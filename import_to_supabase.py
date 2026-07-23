@@ -109,10 +109,17 @@ def import_ban_tin(rows):
         if i == 0 and row.get("Tiêu_đề") == "Tiêu_đề":
             continue
 
+        tieu_de = clean_text(row.get("Tiêu_đề") or row.get("Tiêu đề"))
+        noi_dung = clean_text(row.get("Nội_dung") or row.get("Nội dung"))
+
+        # Bỏ qua dòng trống (không có tiêu đề VÀ không có nội dung)
+        if not tieu_de and not noi_dung:
+            continue
+
         item = {
             "ngay_dang": clean_datetime(row.get("Ngày_đăng") or row.get("Ngày đăng")),
-            "tieu_de": clean_text(row.get("Tiêu_đề") or row.get("Tiêu đề")),
-            "noi_dung": clean_text(row.get("Nội_dung") or row.get("Nội dung")),
+            "tieu_de": tieu_de,
+            "noi_dung": noi_dung,
             "section": clean_text(row.get("Section")) or "Tin mới",
             "loai_tb": clean_text(row.get("Loai_TB") or row.get("Loại TB")),
             "ky_thi": clean_text(row.get("Ky_thi") or row.get("Kỳ thi")) or "All",
