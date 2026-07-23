@@ -172,32 +172,44 @@ def import_index(rows):
     return 0
 
 
-def handler(request):
-    try:
-        data = fetch_api_data()
-        results = {}
-        for table in ["ban_tin", "lich_hoc", "so_tay", "_index"]:
-            clear_table(table)
+def run_sync():
+    data = fetch_api_data()
+    for table in ["ban_tin", "lich_hoc", "so_tay", "_index"]:
+        clear_table(table)
 
-        bt = import_ban_tin(data.get("Ban_tin", []))
-        lh = import_lich_hoc(data.get("Lich_hoc", []))
-        st = import_so_tay(data.get("So_tay", []))
-        ix = import_index(data.get("_index", []))
+    bt = import_ban_tin(data.get("Ban_tin", []))
+    lh = import_lich_hoc(data.get("Lich_hoc", []))
+    st = import_so_tay(data.get("So_tay", []))
+    ix = import_index(data.get("_index", []))
 
-        return {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({
-                "ok": True,
-                "ban_tin": bt,
-                "lich_hoc": lh,
-                "so_tay": st,
-                "_index": ix,
-            }),
-        }
-    except Exception as e:
-        return {
-            "statusCode": 500,
-            "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({"ok": False, "error": str(e)}),
-        }
+    return {
+        "ok": True,
+        "ban_tin": bt,
+        "lich_hoc": lh,
+        "so_tay": st,
+        "_index": ix,
+    }
+
+
+from http.server import BaseHTTPRequestHandler
+
+
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path != "/api/sync":
+            self.send_response(404)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({"ok": False, "error": "Not found"}).encode())
+            return
+
+        try:
+            result = run_sync()
+            self.send_response(200)
+        except Exception as e:
+            result = {"ok": False, "error": str(e)}
+            self.send_response(500)
+
+        self.send_header("Content-type", "application/json")
+        self.end_headers()
+        self.wfile.write(json.dumps(result).encode())
