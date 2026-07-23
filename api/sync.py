@@ -1,6 +1,6 @@
 """
-Vercel serverless function: Sync Google Sheets → Supabase
-GET /api/sync → chạy sync và trả JSON kết quả
+Vercel serverless function: Sync Google Sheets -> Supabase
+GET /api/sync -> ch?y sync va tra? JSON k?t qua?
 """
 import json
 import os
@@ -59,9 +59,9 @@ def _parse_bool(val):
     if val is None:
         return True
     s = str(val).strip().upper()
-    if s in ("TRUE", "1", "YES", "CÓ", "CO"):
+    if s in ("TRUE", "1", "YES", "CO", "CO"):
         return True
-    if s in ("FALSE", "0", "NO", "KHÔNG", "KHONG"):
+    if s in ("FALSE", "0", "NO", "KHONG", "KHONG"):
         return False
     return True
 
@@ -82,79 +82,85 @@ def clear_table(table):
 def import_ban_tin(rows):
     data_rows = []
     for i, row in enumerate(rows):
-        if i == 0 and row.get("Tiêu_đề") == "Tiêu đề":
+        if i == 0 and row.get("Tieu_de") == "Tieu de":
             continue
-        tieu_de = clean_text(row.get("Tiêu_đề") or row.get("Tiêu đề"))
-        noi_dung = clean_text(row.get("Nội_dung") or row.get("Nội dung"))
+        tieu_de = clean_text(row.get("Tieu_de") or row.get("Tieu de"))
+        noi_dung = clean_text(row.get("Noi_dung") or row.get("Noi dung"))
         if not tieu_de and not noi_dung:
             continue
         data_rows.append({
-            "ngay_dang": clean_datetime(row.get("Ngày_đăng") or row.get("Ngày đăng")),
+            "ngay_dang": clean_datetime(row.get("Ngay_dang") or row.get("Ngay dang")),
             "tieu_de": tieu_de,
             "noi_dung": noi_dung,
-            "section": clean_text(row.get("Section")) or "Tin mới",
-            "loai_tb": clean_text(row.get("Loai_TB") or row.get("Loại TB")),
-            "ky_thi": clean_text(row.get("Ky_thi") or row.get("Kỳ thi")) or "All",
-            "giai_doan": clean_text(row.get("Giai_doan") or row.get("Giai đoạn")),
-            "lo_trinh": clean_text(row.get("Lo_trinh") or row.get("Lộ trình")) or "All",
-            "muc_do": clean_text(row.get("Muc_do") or row.get("Mức độ")),
+            "section": clean_text(row.get("Section")) or "Tin moi",
+            "loai_tb": clean_text(row.get("Loai_TB") or row.get("Loai TB")),
+            "ky_thi": clean_text(row.get("Ky_thi") or row.get("Ky thi")) or "All",
+            "giai_doan": clean_text(row.get("Giai_doan") or row.get("Giai doan")),
+            "lo_trinh": clean_text(row.get("Lo_trinh") or row.get("Lo trinh")) or "All",
+            "muc_do": clean_text(row.get("Muc_do") or row.get("Muc do")),
             "start_time": clean_datetime(row.get("Start_time")) or None,
             "end_time": clean_datetime(row.get("End_Time")) or None,
             "hashtag": clean_text(row.get("hashtag") or row.get("Hashtag") or row.get("Hash_tag") or ""),
-            "xuat_ban": _parse_bool(row.get("Xuất bản") or row.get("Xuất_bản") or row.get("Xuat_ban") or row.get("xuat_ban")),
+            "xuat_ban": _parse_bool(row.get("Xuat ban") or row.get("Xuat_bn") or row.get("Xuat_ban") or row.get("xuat_ban")),
         })
     if not data_rows:
-        return 0
+        return 0, "no data"
     ok = 0
     for i in range(0, len(data_rows), 50):
         batch = data_rows[i : i + 50]
-        status, _ = supabase_request("POST", "ban_tin", data=batch)
+        status, body = supabase_request("POST", "ban_tin", data=batch)
         if status < 300:
             ok += len(batch)
-    return ok
+        else:
+            return ok, f"HTTP {status}: {body[:100]}"
+    return ok, "ok"
 
 
 def import_lich_hoc(rows):
     data_rows = []
     for i, row in enumerate(rows):
         if i == 0:
-            if row.get("Tên bài giảng") == "Tên bài giảng":
+            if row.get("Ten bai giang") == "Ten bai giang":
                 continue
-            if "= 3" in str(row.get("Tên bài giảng", "")):
+            if "= 3" in str(row.get("Ten bai giang", "")):
                 continue
         item = {
-            "ten_bai_giang": clean_text(row.get("Tên bài giảng") or row.get("3")),
-            "ten_gv": clean_text(row.get("Tên GV") or row.get("4") or ""),
-            "ngay_live": parse_date_dmy(row.get("Ngày live") or row.get("5")),
-            "khung_gio": clean_text(row.get("Khung giờ") or row.get("7") or ""),
-            "ky_thi_lop": clean_text(row.get("Kỳ thi/Lớp") or row.get("32") or "All"),
+            "ten_bai_giang": clean_text(row.get("Ten bai giang") or row.get("3")),
+            "ten_gv": clean_text(row.get("Ten GV") or row.get("4") or ""),
+            "ngay_live": parse_date_dmy(row.get("Ngay live") or row.get("5")),
+            "khung_gio": clean_text(row.get("Khung gio") or row.get("7") or ""),
+            "ky_thi_lop": clean_text(row.get("Ky thi/Lop") or row.get("32") or "All"),
         }
         if item["ten_bai_giang"]:
             data_rows.append(item)
     if not data_rows:
-        return 0
+        return 0, "no data"
     ok = 0
     for i in range(0, len(data_rows), 50):
         batch = data_rows[i : i + 50]
-        status, _ = supabase_request("POST", "lich_hoc", data=batch)
+        status, body = supabase_request("POST", "lich_hoc", data=batch)
         if status < 300:
             ok += len(batch)
-    return ok
+        else:
+            return ok, f"HTTP {status}: {body[:100]}"
+    return ok, "ok"
 
 
 def import_so_tay(rows):
     data_rows = []
     for i, row in enumerate(rows):
-        if i == 0 and (row.get("TT") == "TT" or row.get("Tít") == "Tít"):
+        if i == 0 and (row.get("TT") == "TT" or row.get("Tit") == "Tit"):
             continue
-        tieu_de = clean_text(row.get("Tít") or row.get("Tiêu đề") or row.get("Tieu_de"))
+        tieu_de = clean_text(row.get("Tit") or row.get("Tieu de") or row.get("Tieu_de"))
         link = clean_text(row.get("Link") or row.get("") or row.get("3"))
         if tieu_de:
             data_rows.append({"tieu_de": tieu_de, "link": link})
     if data_rows:
-        status, _ = supabase_request("POST", "so_tay", data=data_rows)
-        return len(data_rows) if status < 300 else 0
-    return 0
+        status, body = supabase_request("POST", "so_tay", data=data_rows)
+        if status < 300:
+            return len(data_rows), "ok"
+        return 0, f"HTTP {status}: {body[:100]}"
+    return 0, "no data"
 
 
 def import_index(rows):
@@ -162,32 +168,34 @@ def import_index(rows):
     for i, row in enumerate(rows):
         if i == 0:
             continue
-        loai_tb = clean_text(row.get("Loai_TB") or row.get("Loại TB") or row.get("1"))
+        loai_tb = clean_text(row.get("Loai_TB") or row.get("Loai TB") or row.get("1"))
         icon = clean_text(row.get("icon") or row.get("8"))
         if loai_tb:
             data_rows.append({"loai_tb": loai_tb, "icon": icon})
     if data_rows:
-        status, _ = supabase_request("POST", "_index", data=data_rows)
-        return len(data_rows) if status < 300 else 0
-    return 0
+        status, body = supabase_request("POST", "_index", data=data_rows)
+        if status < 300:
+            return len(data_rows), "ok"
+        return 0, f"HTTP {status}: {body[:100]}"
+    return 0, "no data"
 
 
 def run_sync():
     data = fetch_api_data()
-    for table in ["ban_tin", "lich_hoc", "so_tay", "_index"]:
-        clear_table(table)
+    ok = all(clear_table(t) for t in ["ban_tin", "lich_hoc", "so_tay", "_index"])
 
-    bt = import_ban_tin(data.get("Ban_tin", []))
-    lh = import_lich_hoc(data.get("Lich_hoc", []))
-    st = import_so_tay(data.get("So_tay", []))
-    ix = import_index(data.get("_index", []))
+    bt, bt_msg = import_ban_tin(data.get("Ban_tin", []))
+    lh, lh_msg = import_lich_hoc(data.get("Lich_hoc", []))
+    st, st_msg = import_so_tay(data.get("So_tay", []))
+    ix, ix_msg = import_index(data.get("_index", []))
 
     return {
-        "ok": True,
+        "ok": ok,
         "ban_tin": bt,
         "lich_hoc": lh,
         "so_tay": st,
         "_index": ix,
+        "messages": [bt_msg, lh_msg, st_msg, ix_msg],
     }
 
 
@@ -207,7 +215,7 @@ class handler(BaseHTTPRequestHandler):
             result = run_sync()
             self.send_response(200)
         except Exception as e:
-            result = {"ok": False, "error": str(e)}
+            result = {"ok": False, "error": str(e), "type": type(e).__name__}
             self.send_response(500)
 
         self.send_header("Content-type", "application/json")
