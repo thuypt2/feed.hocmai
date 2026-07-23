@@ -105,12 +105,14 @@ def import_ban_tin(rows):
     print(f"📰 Import Ban_tin ({len(rows)} rows)...")
     data_rows = []
     for i, row in enumerate(rows):
-        # Bỏ qua header row
-        if i == 0 and row.get("Tiêu_đề") == "Tiêu_đề":
+        # Bỏ qua dòng tiêu đề (header) - kiểm tra dựa trên tieu_de
+        tieu_de_raw = str(row.get("Tiêu_đề") or row.get("Tiêu đề") or "")
+        noi_dung_raw = str(row.get("Nội_dung") or row.get("Nội dung") or "")
+        if tieu_de_raw in ("Tiêu_đề", "Tiêu đề", "Tiêu_de") or noi_dung_raw in ("Nội_dung", "Nội dung", "Noi_dung"):
             continue
 
-        tieu_de = clean_text(row.get("Tiêu_đề") or row.get("Tiêu đề"))
-        noi_dung = clean_text(row.get("Nội_dung") or row.get("Nội dung"))
+        tieu_de = clean_text(tieu_de_raw)
+        noi_dung = clean_text(noi_dung_raw)
 
         # Bỏ qua dòng trống (không có tiêu đề VÀ không có nội dung)
         if not tieu_de and not noi_dung:
