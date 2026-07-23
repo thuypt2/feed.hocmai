@@ -8,7 +8,7 @@ import urllib.request
 import urllib.error
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://xaxohdyscyxbamvtdjzw.supabase.co")
-ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "eyJhbG...8SIo")
+ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhheG9oZHlzY3l4YmFtdnRkanp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ1NTkyMTAsImV4cCI6MjEwMDEzNTIxMH0.garOtg2u5-WzOC6XkQ_EzeTT_FNczcq7u0R28ee8SIo")
 API_URL = "https://script.google.com/macros/s/AKfycbz73HKnzuubZYVQaharliKVIT9jUUu5IAnmBtv5FVLpjNyDFM3H4m370WHZns__ElAybw/exec"
 
 
